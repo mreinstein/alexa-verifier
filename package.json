@@ -2,12 +2,12 @@
   "name": "alexa-verifier",
   "version": "0.0.1",
   "description": "Verify HTTP requests sent to an Alexa skill are sent from Amazon",
-  "main": "index.js",
+  "main": "index.coffee",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Mike Reinstein",
+  "license": "MIT",
   "dependencies": {
     "openssl-cert-tools": "^1.2.0",
     "request": "^2.67.0"
