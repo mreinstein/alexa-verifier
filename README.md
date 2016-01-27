@@ -3,7 +3,7 @@ Verify HTTP requests sent to an Alexa skill are sent from Amazon.
 
 
 ### motivation
-There are more rules that must be followe when hosting an Amazon Echo Alexa Skill on a web server instead of AWS Lambda. Part of the certication process for alexa skill submission is that your skill must validate requests are actually coming from Amazon. This is enforced by checking:
+Part of the certication process for alexa skills hosted on a generic web service (i.e., not AWS Lambda) is that your skill must validate requests are actually coming from Amazon. This is enforced by checking:
 
 * the timestamp of the request
 * the validity of the certificate
@@ -52,6 +52,7 @@ app.use (req, res, next) ->
   # mark the request body as already having been parsed so it's ignored by
   # other body parser middlewares
   req._body = true
+
   req.rawBody = ''
   req.on 'data', (data) ->
     req.rawBody += data
