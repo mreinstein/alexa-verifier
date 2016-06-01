@@ -1,9 +1,10 @@
-crypto  = require 'crypto'
-fs      = require 'fs'
-os      = require 'os'
-request = require 'request'
-tools   = require 'openssl-cert-tools'
-url     = require 'url'
+crypto    = require 'crypto'
+fs        = require 'fs'
+os        = require 'os'
+request   = require 'request'
+tools     = require 'openssl-cert-tools'
+url       = require 'url'
+validator = require 'validator'
 
 
 # certificate validator express middleware for amazon echo
@@ -93,7 +94,12 @@ validateSignature = (pem_cert, signature, requestBody) ->
 # TIMESTAMP_TOLERANCE seconds
 # returns null if valid, or an error string otherwise
 validateTimestamp = (requestBody) ->
-  request_json = JSON.parse requestBody
+  request_json = null
+  try
+    request_json = JSON.parse requestBody
+  catch e
+    return 'request body invalid json'
+  
   if not (request_json.request and request_json.request.timestamp)
     return 'Timestamp field not present in request'
 
@@ -105,7 +111,10 @@ validateTimestamp = (requestBody) ->
   null
 
 
-module.exports = (cert_url, signature, requestBody, callback) ->
+module.exports = (cert_url='', signature='', requestBody='', callback=->) ->
+  if not validator.isBase64(signature)
+    return callback('signature is not base64 encoded')
+
   er = validateTimestamp requestBody
   if er
     return callback(er)
