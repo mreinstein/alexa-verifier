@@ -1,6 +1,9 @@
 # alexa-verifier
 Verify HTTP requests sent to an Alexa skill are sent from Amazon.
 
+This module is framework-agnostic, but since express is currently the most popular choice I'll 
+provide an example of that below.
+
 
 ### motivation
 Part of the certication process for alexa skills hosted on a generic web service (i.e., not AWS Lambda) is that your skill must validate requests are actually coming from Amazon. This is enforced by checking:
@@ -26,10 +29,7 @@ verifier(cert_url, signature, requestRawBody, callback);
 
 ### express example usage
 
-This module is framework-agnostic, but since I'm using express and since that seems to be a popular choice I'll 
-provide an example of that.
-
-One thing to note: if you're using the ever-popular `body-parser` module to parse request bodies, you'll need some
+If you're using the ever-popular `body-parser` module to parse request bodies, you'll need some
 magic to actually get the raw request body. Much of the following snippet is related to getting at the raw request body.
 
 
