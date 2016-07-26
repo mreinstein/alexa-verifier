@@ -11,7 +11,7 @@ var validator = require('validator');
 var TIMESTAMP_TOLERANCE = 150;
 var VALID_CERT_HOSTNAME = 's3.amazonaws.com';
 var VALID_CERT_PATH_START = '/echo.api/';
-var VALID_CERT_PORT = 443;
+var VALID_CERT_PORT = '443';
 var SIGNATURE_FORMAT = 'base64';
 
 
@@ -96,8 +96,8 @@ function validateCertUri(cert_uri) {
   if (cert_uri.port && (cert_uri.port !== VALID_CERT_PORT)) {
     return "Certificate URI port MUST be " + VALID_CERT_PORT + ", was: " + cert_uri.port;
   }
-  if (cert_uri.host !== VALID_CERT_HOSTNAME) {
-    return "Certificate URI hostname must be " + VALID_CERT_HOSTNAME + ": " + cert_uri;
+  if (cert_uri.hostname !== VALID_CERT_HOSTNAME) {
+    return "Certificate URI hostname must be " + VALID_CERT_HOSTNAME + ": " + cert_uri.hostname;
   }
   if (cert_uri.path.indexOf(VALID_CERT_PATH_START) !== 0) {
     return "Certificate URI path must start with " + VALID_CERT_PATH_START + ": " + cert_uri;
@@ -141,7 +141,7 @@ function validateTimestamp(requestBody) {
 
 
 // certificate validator express middleware for amazon echo
-module.exports = function(cert_url, signature, requestBody, callback) {
+var verifier = module.exports = function(cert_url, signature, requestBody, callback) {
   var er;
   if (cert_url == null) {
     cert_url = '';
@@ -176,3 +176,6 @@ module.exports = function(cert_url, signature, requestBody, callback) {
     callback();
   });
 };
+
+// Export to make unit testing easier:
+verifier.validateCertUri = validateCertUri;
