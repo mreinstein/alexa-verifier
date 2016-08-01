@@ -1,11 +1,12 @@
 var crypto    = require('crypto');
-var fs        = require('fs');
-var os        = require('os');
 var request   = require('request');
 var tools     = require('openssl-cert-tools');
 var url       = require('url');
 var validator = require('validator');
 
+// Default in-memory cache for downloaded certificates,
+// used if no cache is explicitely passed.
+var globalCache = {};
 
 // global constants
 var TIMESTAMP_TOLERANCE = 150;
@@ -15,52 +16,43 @@ var VALID_CERT_PORT = '443';
 var SIGNATURE_FORMAT = 'base64';
 
 
-function md5(input) {
-  return crypto.createHash('sha1').update(input).digest('hex');
-}
+function getCert(cert_url, cache, callback) {
+  var cert_uri = url.parse(cert_url);
+  var result = validateCertUri(cert_uri);
+  if (result !== true) {
+    return callback(result);
+  }
 
-function getCert (cert_url, callback) {
-  var tmpdir = '/tmp'; // os.tmpdir()
-  var cert_filepath = tmpdir + '/' + md5(cert_url) + '.pem';
-
-  fs.stat(cert_filepath, function(er, stat) {
-    var cert_uri, result;
-    if (stat) {
-      return fs.readFile(cert_filepath, 'utf8', callback);
+  fetchCert(cert_uri, cache, function(er, pem_cert) {
+    if (er) {
+      return callback(er);
     }
 
-    cert_uri = url.parse(cert_url);
-    result = validateCertUri(cert_uri);
-    if (result !== true) {
-      return callback(result);
-    }
-
-    fetchCert(cert_uri, function(er, pem_cert) {
+    validateCert(pem_cert, function(er) {
       if (er) {
         return callback(er);
       }
-
-      validateCert(pem_cert, function(er) {
-        if (er) {
-          return callback(er);
-        }
-        fs.writeFile(cert_filepath, pem_cert, 'utf8', function(er) {
-          callback(er, pem_cert);
-        });
-      });
+      callback(er, pem_cert);
     });
   });
 }
 
 
-function fetchCert(uri, callback) {
-  var cert_url;
-  cert_url = "https://" + uri.host + ":" + (uri.port || '') + "/" + uri.path;
-  request.get(cert_url, function(er, response, body) {
-    if (body) {
+function fetchCert(uri, cache, callback) {
+  cache = cache || globalCache;
+  let cachedResponse = cache[uri.href];
+  if (cachedResponse) {
+    callback(null, cachedResponse);
+    return;
+  }
+
+  request.get(uri.href, function(er, response, body) {
+    if (response && 200 === response.statusCode) {
+      cache[uri.href] = body;
       callback(null, body);
     } else {
-      callback("Failed to download certificate at: " + cert_url + ". Response code: " + response.code + ", error: " + body);
+      let statusCode = response ? response.statusCode : 0;
+      callback("Failed to download certificate at: " + uri.href + ". Response code: " + statusCode + ", error: " + er);
     }
   });
 }
@@ -141,7 +133,7 @@ function validateTimestamp(requestBody) {
 
 
 // certificate validator express middleware for amazon echo
-var verifier = module.exports = function(cert_url, signature, requestBody, callback) {
+var verifier = module.exports = function(cert_url, signature, requestBody, callback, cache) {
   var er;
   if (cert_url == null) {
     cert_url = '';
@@ -163,8 +155,8 @@ var verifier = module.exports = function(cert_url, signature, requestBody, callb
   if (er) {
     return callback(er);
   }
-  
-  getCert(cert_url, function(er, pem_cert) {
+
+  getCert(cert_url, cache, function(er, pem_cert) {
     var success;
     if (er) {
       return callback(er);
@@ -179,3 +171,4 @@ var verifier = module.exports = function(cert_url, signature, requestBody, callb
 
 // Export to make unit testing easier:
 verifier.validateCertUri = validateCertUri;
+verifier.fetchCert = fetchCert;

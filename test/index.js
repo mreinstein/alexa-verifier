@@ -1,3 +1,4 @@
+var nock     = require('nock');
 var test     = require('tap').test;
 var unroll   = require('unroll');
 unroll.use(test);
@@ -35,6 +36,49 @@ unroll('verifier.validateCertUri should be #valid for #url',
   ]
 );
 
+let doFetchCertAndAssert = function(
+    t, mock_status, mock_resp, expected_pem_cert, cache, cb) {
+  let url_string = 'https://s3.amazonaws.com/echo.api/echo-api-cert.pem';
+  let cert_url = url.parse(url_string);
+  if (mock_status && mock_resp) {
+    nock('https://s3.amazonaws.com')
+      .get(cert_url.path)
+      .reply(mock_status, mock_resp);
+  }
+  verifier.fetchCert(cert_url, cache, (er, pem_cert) => {
+    if (expected_pem_cert) {
+      t.equal(er, null);
+      t.equal(pem_cert, expected_pem_cert);
+    } else {
+      t.notEqual(er, null);
+      t.equal(pem_cert, undefined);
+    }
+    if (cb) {
+      cb(t);
+    } else {
+      t.end();
+    }
+  });
+}
+
+test('verifier.fetchCert should ignore response for error HTTP status', (t) => {
+  doFetchCertAndAssert(t, 400, 'Bad Request', null);
+});
+
+test('verifier.fetchCert should call back with response body for OK HTTP status', (t) => {
+  let pem_data = 'mock pem data';
+  doFetchCertAndAssert(t, 200, pem_data, pem_data);
+});
+
+test('verifier.fetchCert should hit cache for subsequent certificate reqs', (t) => {
+  let cache = {};
+  let pem_data = 'mock pem data';
+  doFetchCertAndAssert(t, 200, pem_data, pem_data, cache, (t) => {
+    // pass undefined to avoid setting up nock. If a cache miss would occur,
+    // nock would throw an exception.
+    doFetchCertAndAssert(t, undefined, undefined, pem_data, cache);
+  });
+});
 
 test('handle invalid cert_url parameter', function(t) {
   var body, now, signature;
