@@ -7,9 +7,9 @@ var verifier = require('../');
 
 unroll('verifier.validateCertUri should be #valid for #url',
   function(t, testArgs) {
-    let cert_uri = url.parse(testArgs['url']);
-    let result = verifier.validateCertUri(cert_uri);
-    let valid = testArgs['valid'];
+    var cert_uri = url.parse(testArgs['url']);
+    var result = verifier.validateCertUri(cert_uri);
+    var valid = testArgs['valid'];
     t.notEqual(valid, undefined);
     if (valid === true) {
       t.equal(result, true);
