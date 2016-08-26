@@ -18,6 +18,7 @@
     "validator": "^5.3.0"
   },
   "devDependencies": {
+    "nock": "^8.0.0",
     "tap": "^6.1.1",
     "unroll": "^1.1.0"
   }
