@@ -4,7 +4,9 @@
 
 Verify HTTP requests sent to an Alexa skill are sent from Amazon.
 
-This module is framework-agnostic. If you're using expressjs, [alexa-verifier-middleware](https://github.com/mreinstein/alexa-verifier-middleware) is easier to integrate.
+This module is framework-agnostic.
+
+If you're using expressjs, you should check out [alexa-verifier-middleware](https://github.com/mreinstein/alexa-verifier-middleware) which is a lot easier to integrate.
 
 
 
@@ -21,10 +23,13 @@ This module provides a function to handle this validation.
 ### usage
 
 ```javascript
-verifier(cert_url, signature, requestRawBody, callback);
+const verifier = require('alexa-verifier')
+
+
+verifier(cert_url, signature, requestRawBody, callback)
 ```
 
-* `cert_url`  full url of the certificate to verify (from the HTTP request header named `signaturecertchainurl`)
-* `signature` signature of the request (from the HTTP request header named `signature`)
+* `cert_url`  full url of the certificate to verify (from HTTP request header named `signaturecertchainurl`)
+* `signature` signature of the request (from HTTP request header named `signature`)
 * `requestRawBody`  full body string from POST request
 * `callback`  completion function. has 1 argument which indicates error. falsey when verification passes
