@@ -6,7 +6,7 @@ Verify HTTP requests sent to an Alexa skill are sent from Amazon.
 
 This module is framework-agnostic.
 
-If you're using expressjs, you should check out [alexa-verifier-middleware](https://github.com/mreinstein/alexa-verifier-middleware) which is a lot easier to integrate.
+If you're using expressjs, you should check out [alexa-verifier-middleware](https://github.com/tejashah88/alexa-verifier-middleware) which is a lot easier to integrate.
 
 
 
