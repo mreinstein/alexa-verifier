@@ -1,6 +1,6 @@
 {
   "name": "alexa-verifier",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Verify HTTP requests sent to an Alexa skill are sent from Amazon",
   "main": "index.js",
   "repository": {
@@ -15,10 +15,10 @@
   "dependencies": {
     "openssl-cert-tools": "^1.2.0",
     "request": "^2.67.0",
-    "validator": "^5.3.0"
+    "validator": "^6.2.0"
   },
   "devDependencies": {
-    "tap": "^7.0.0",
+    "tap": "^8.0.1",
     "unroll": "^1.1.0"
   }
 }
