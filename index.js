@@ -121,7 +121,7 @@ function validateTimestamp(requestBody) {
 
 
 // certificate validator express middleware for amazon echo
-var verifier = module.exports = function(cert_url, signature, requestBody, callback) {
+module.exports = function verifier(cert_url, signature, requestBody, callback) {
   var er
   if (cert_url == null) {
     cert_url = ''
