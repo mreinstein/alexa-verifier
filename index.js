@@ -5,13 +5,11 @@ var request   = require('request')
 var tools     = require('openssl-cert-tools')
 var url       = require('url')
 var validator = require('validator')
+var validateCertUri = require('./validate-cert-uri')
 
 
-// global constants
+// constants
 var TIMESTAMP_TOLERANCE = 150
-var VALID_CERT_HOSTNAME = 's3.amazonaws.com'
-var VALID_CERT_PATH_START = '/echo.api/'
-var VALID_CERT_PORT = '443'
 var SIGNATURE_FORMAT = 'base64'
 
 
@@ -88,24 +86,6 @@ function validateCert(pem_cert, callback) {
 }
 
 
-// parse a certificate and check it's contents for validity
-function validateCertUri(cert_uri) {
-  if (cert_uri.protocol !== 'https:') {
-    return "Certificate URI MUST be https: " + cert_uri
-  }
-  if (cert_uri.port && (cert_uri.port !== VALID_CERT_PORT)) {
-    return "Certificate URI port MUST be " + VALID_CERT_PORT + ", was: " + cert_uri.port
-  }
-  if (cert_uri.hostname !== VALID_CERT_HOSTNAME) {
-    return "Certificate URI hostname must be " + VALID_CERT_HOSTNAME + ": " + cert_uri.hostname
-  }
-  if (cert_uri.path.indexOf(VALID_CERT_PATH_START) !== 0) {
-    return "Certificate URI path must start with " + VALID_CERT_PATH_START + ": " + cert_uri
-  }
-  return true
-}
-
-
 // returns true if the signature for the request body is valid, false otherwise
 function validateSignature(pem_cert, signature, requestBody) {
   var verifier
@@ -176,6 +156,3 @@ var verifier = module.exports = function(cert_url, signature, requestBody, callb
     callback()
   })
 }
-
-// Export to make unit testing easier:
-verifier.validateCertUri = validateCertUri
