@@ -19,7 +19,7 @@ function createInvalidCert() {
   var forge = require('node-forge');
   var pki = forge.pki;
 
-  var keys = pki.rsa.generateKeyPair(2048);
+  var keys = pki.rsa.generateKeyPair(512);
   var cert = pki.createCertificate();
   cert.publicKey = keys.publicKey;
   // alternatively set public key from a csr
