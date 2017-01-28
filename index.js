@@ -4,8 +4,7 @@ var request = require('request')
 var url = require('url')
 var validator = require('validator')
 var validateCertUri = require('./validate-cert-uri')
-var forge = require('node-forge');
-var pki = forge.pki;
+var validateCert = require('./validate-cert');
 
 // constants
 var TIMESTAMP_TOLERANCE = 150
@@ -23,38 +22,13 @@ function getCert(cert_url, callback) {
       return callback(er)
     }
 
-    validateCert(pem_cert, function(er) {
+    validateCert.validate(pem_cert, function(er) {
       if (er) {
         return callback(er)
       }
       callback(er, pem_cert)
     })
   })
-}
-
-
-function validateCert(pem_cert, callback) {
-  try {
-    var cert = pki.certificateFromPem(pem_cert);
-    
-    // check that the domain echo-api.amazon.com is present in the Subject
-    // Alternative Names (SANs) section of the signing certificate
-    if (cert.subject.getField('CN').value.indexOf('echo-api.amazon.com') === -1) {
-      return callback('subjectAltName Check Failed')
-    }
-
-    var notAfter = new Date(cert.validity.notAfter);
-    var remainingDays = notAfter.getTime() - new Date().getTime();
-    // check that the signing certificate has not expired (examine both the Not
-    // Before and Not After dates)
-    if (remainingDays < 1) {
-      return callback('certificate expiration check failed')
-    }
-
-    callback()
-  } catch (e) {
-    return callback(e);
-  }
 }
 
 
