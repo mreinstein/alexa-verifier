@@ -1,12 +1,12 @@
 # alexa-verifier
 
-[![Build Status](https://travis-ci.org/mreinstein/alexa-verifier.svg?branch=master)](https://travis-ci.org/mreinstein/alexa-verifier)
+[![Build Status](https://travis-ci.org/mreinstein/alexa-verifier.svg?branch=master)](https://travis-ci.org/alexa-js/alexa-verifier)
 
 Verify HTTP requests sent to an Alexa skill are sent from Amazon.
 
 This module is framework-agnostic.
 
-If you're using expressjs, you should check out [alexa-verifier-middleware](https://github.com/tejashah88/alexa-verifier-middleware) which is a lot easier to integrate.
+If you're using expressjs, you should check out [alexa-verifier-middleware](https://github.com/alexa-js/alexa-verifier-middleware) which is a lot easier to integrate.
 
 
 
