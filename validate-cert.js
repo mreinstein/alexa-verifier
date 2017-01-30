@@ -1,7 +1,7 @@
 var forge = require('node-forge');
 var pki = forge.pki;
 
-function validate(pem_cert, callback) {
+module.exports = function validate(pem_cert, callback) {
   try {
     var cert = pki.certificateFromPem(pem_cert);
 
@@ -24,7 +24,3 @@ function validate(pem_cert, callback) {
     return callback(e);
   }
 }
-
-module.exports = {
-  validate: validate
-};

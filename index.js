@@ -22,7 +22,7 @@ function getCert(cert_url, callback) {
       return callback(er)
     }
 
-    validateCert.validate(pem_cert, function(er) {
+    validateCert(pem_cert, function(er) {
       if (er) {
         return callback(er)
       }

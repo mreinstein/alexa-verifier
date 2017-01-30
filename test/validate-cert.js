@@ -98,7 +98,7 @@ function createInvalidCert() {
 }
 
 test('fails on invalid pem cert parameter', function(t) {
-  validateCert.validate(null, function(er) {
+  validateCert(null, function(er) {
     t.assert(er !== null, 'Errot should have been thrown');
     t.end();
   });
@@ -107,7 +107,7 @@ test('fails on invalid pem cert parameter', function(t) {
 test('fails on non amazon subject common name', function(t) {
   var pem = createInvalidCert();
 
-  validateCert.validate(pem, function(er) {
+  validateCert(pem, function(er) {
     t.assert(er === 'subjectAltName Check Failed', 'Certificate must be from amazon');
     t.end();
   });
@@ -115,7 +115,7 @@ test('fails on non amazon subject common name', function(t) {
 
 test('fails on expired certificate', function(t) {
   getEchoCert(oldCertUrl, function(pem) {
-    validateCert.validate(pem, function(er) {
+    validateCert(pem, function(er) {
       t.assert(er === 'certificate expiration check failed', 'Certificate is expired');
       t.end();
     });
@@ -124,7 +124,7 @@ test('fails on expired certificate', function(t) {
 
 test('approves valid certifcate', function(t) {
   getEchoCert(latestCertUrl, function(pem) {
-    validateCert.validate(pem, function(er) {
+    validateCert(pem, function(er) {
       t.assert(!er, 'Certificate should be valid');
       t.end();
     });
