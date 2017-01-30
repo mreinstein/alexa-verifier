@@ -1,33 +1,33 @@
 var test = require('tap').test
 var url = require('url')
-var validateCert = require('../validate-cert');
-var request = require('request');
+var validateCert = require('../validate-cert')
+var request = require('request')
 
 
-var oldCertUrl = 'https://s3.amazonaws.com/echo.api/echo-api-cert.pem';
+var oldCertUrl = 'https://s3.amazonaws.com/echo.api/echo-api-cert.pem'
 
-var latestCertUrl = 'https://s3.amazonaws.com/echo.api/echo-api-cert-4.pem';
+var latestCertUrl = 'https://s3.amazonaws.com/echo.api/echo-api-cert-4.pem'
 
 function getEchoCert(certUrl, callback) {
   request(certUrl, function(err, res, body){
-    callback(body);
+    callback(body)
   })
 }
 
 function createInvalidCert() {
   // From node-forge documentation
-  var forge = require('node-forge');
-  var pki = forge.pki;
+  var forge = require('node-forge')
+  var pki = forge.pki
 
-  var keys = pki.rsa.generateKeyPair(512);
-  var cert = pki.createCertificate();
-  cert.publicKey = keys.publicKey;
+  var keys = pki.rsa.generateKeyPair(512)
+  var cert = pki.createCertificate()
+  cert.publicKey = keys.publicKey
   // alternatively set public key from a csr
-  //cert.publicKey = csr.publicKey;
-  cert.serialNumber = '01';
-  cert.validity.notBefore = new Date();
-  cert.validity.notAfter = new Date();
-  cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1);
+  //cert.publicKey = csr.publicKey
+  cert.serialNumber = '01'
+  cert.validity.notBefore = new Date()
+  cert.validity.notAfter = new Date()
+  cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1)
   var attrs = [{
     name: 'commonName',
     value: 'example.org'
@@ -46,11 +46,11 @@ function createInvalidCert() {
   }, {
     shortName: 'OU',
     value: 'Test'
-  }];
-  cert.setSubject(attrs);
+  }]
+  cert.setSubject(attrs)
   // alternatively set subject from a csr
-  //cert.setSubject(csr.subject.attributes);
-  cert.setIssuer(attrs);
+  //cert.setSubject(csr.subject.attributes)
+  cert.setIssuer(attrs)
   cert.setExtensions([{
     name: 'basicConstraints',
     cA: true
@@ -88,45 +88,45 @@ function createInvalidCert() {
     }]
   }, {
     name: 'subjectKeyIdentifier'
-  }]);
+  }])
 
   // self-sign certificate
-  cert.sign(keys.privateKey);
+  cert.sign(keys.privateKey)
 
-  var pem = pki.certificateToPem(cert);
-  return pem;
+  var pem = pki.certificateToPem(cert)
+  return pem
 }
 
 test('fails on invalid pem cert parameter', function(t) {
   validateCert(null, function(er) {
-    t.assert(er !== null, 'Errot should have been thrown');
-    t.end();
-  });
+    t.assert(er !== null, 'Errot should have been thrown')
+    t.end()
+  })
 })
 
 test('fails on non amazon subject common name', function(t) {
-  var pem = createInvalidCert();
+  var pem = createInvalidCert()
 
   validateCert(pem, function(er) {
-    t.assert(er === 'subjectAltName Check Failed', 'Certificate must be from amazon');
-    t.end();
-  });
+    t.assert(er === 'subjectAltName Check Failed', 'Certificate must be from amazon')
+    t.end()
+  })
 })
 
 test('fails on expired certificate', function(t) {
   getEchoCert(oldCertUrl, function(pem) {
     validateCert(pem, function(er) {
-      t.assert(er === 'certificate expiration check failed', 'Certificate is expired');
-      t.end();
-    });
-  });
+      t.assert(er === 'certificate expiration check failed', 'Certificate is expired')
+      t.end()
+    })
+  })
 })
 
 test('approves valid certifcate', function(t) {
   getEchoCert(latestCertUrl, function(pem) {
     validateCert(pem, function(er) {
-      t.assert(!er, 'Certificate should be valid');
-      t.end();
-    });
-  });
+      t.assert(!er, 'Certificate should be valid')
+      t.end()
+    })
+  })
 })

@@ -1,9 +1,10 @@
-var forge = require('node-forge');
-var pki = forge.pki;
+var forge = require('node-forge')
+var pki = forge.pki
+
 
 module.exports = function validate(pem_cert, callback) {
   try {
-    var cert = pki.certificateFromPem(pem_cert);
+    var cert = pki.certificateFromPem(pem_cert)
 
     // check that the domain echo-api.amazon.com is present in the Subject
     // Alternative Names (SANs) section of the signing certificate
@@ -11,8 +12,8 @@ module.exports = function validate(pem_cert, callback) {
       return callback('subjectAltName Check Failed')
     }
 
-    var notAfter = new Date(cert.validity.notAfter);
-    var remainingDays = notAfter.getTime() - new Date().getTime();
+    var notAfter = new Date(cert.validity.notAfter)
+    var remainingDays = notAfter.getTime() - new Date().getTime()
     // check that the signing certificate has not expired (examine both the Not
     // Before and Not After dates)
     if (remainingDays < 1) {
@@ -21,6 +22,6 @@ module.exports = function validate(pem_cert, callback) {
 
     callback()
   } catch (e) {
-    return callback(e);
+    return callback(e)
   }
 }

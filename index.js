@@ -4,7 +4,8 @@ var request = require('request')
 var url = require('url')
 var validator = require('validator')
 var validateCertUri = require('./validate-cert-uri')
-var validateCert = require('./validate-cert');
+var validateCert = require('./validate-cert')
+
 
 // constants
 var TIMESTAMP_TOLERANCE = 150
@@ -60,7 +61,7 @@ function validateTimestamp(requestBody) {
   now = new Date()
   oldestTime = now.getTime() - (TIMESTAMP_TOLERANCE * 1000)
   if (d.getTime() < oldestTime) {
-    return "Request is from more than " + TIMESTAMP_TOLERANCE + " seconds ago"
+    return 'Request is from more than ' + TIMESTAMP_TOLERANCE + ' seconds ago'
   }
   return null
 }
