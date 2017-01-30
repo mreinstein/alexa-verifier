@@ -1,11 +1,10 @@
-var crypto          = require('crypto')
-var fetchCert       = require('./fetch-cert')
-var request         = require('request')
-var tools           = require('openssl-cert-tools')
-var url             = require('url')
-var validator       = require('validator')
+var crypto = require('crypto')
+var fetchCert = require('./fetch-cert')
+var request = require('request')
+var url = require('url')
+var validator = require('validator')
 var validateCertUri = require('./validate-cert-uri')
-
+var validateCert = require('./validate-cert');
 
 // constants
 var TIMESTAMP_TOLERANCE = 150
@@ -29,28 +28,6 @@ function getCert(cert_url, callback) {
       }
       callback(er, pem_cert)
     })
-  })
-}
-
-
-function validateCert(pem_cert, callback) {
-  return tools.getCertificateInfo(pem_cert, function(er, info) {
-    if (er) {
-      return callback(er)
-    }
-
-    // check that the domain echo-api.amazon.com is present in the Subject
-    // Alternative Names (SANs) section of the signing certificate
-    if (info.subject.CN.indexOf('echo-api.amazon.com') === -1) {
-      return callback('subjectAltName Check Failed')
-    }
-
-    // check that the signing certificate has not expired (examine both the Not
-    // Before and Not After dates)
-    if (info.remainingDays < 1) {
-      return callback('certificate expiration check failed')
-    }
-    callback()
   })
 }
 
@@ -102,7 +79,7 @@ module.exports = function verifier(cert_url, signature, requestBody, callback) {
     requestBody = ''
   }
   if (callback == null) {
-    callback = function() { }
+    callback = function() {}
   }
   if (!validator.isBase64(signature)) {
     return callback('signature is not base64 encoded')
@@ -112,7 +89,7 @@ module.exports = function verifier(cert_url, signature, requestBody, callback) {
   if (er) {
     return callback(er)
   }
-  
+
   getCert(cert_url, function(er, pem_cert) {
     var success
     if (er) {
