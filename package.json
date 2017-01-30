@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mreinstein/alexa-verifier.git"
+    "url": "https://github.com/alexa-js/alexa-verifier.git"
   },
   "scripts": {
     "test": "tap ./test"
