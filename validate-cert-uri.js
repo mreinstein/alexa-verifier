@@ -1,7 +1,7 @@
 // constants
-var VALID_CERT_HOSTNAME = 's3.amazonaws.com'
+var VALID_CERT_HOSTNAME   = 's3.amazonaws.com'
 var VALID_CERT_PATH_START = '/echo.api/'
-var VALID_CERT_PORT = '443'
+var VALID_CERT_PORT       = '443'
 
 // parse a certificate and check it's contents for validity
 module.exports = function validateCertUri(cert_uri) {

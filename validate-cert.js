@@ -1,5 +1,4 @@
-var forge = require('node-forge')
-var pki = forge.pki
+var pki = require('node-forge').pki
 
 
 module.exports = function validate(pem_cert, callback) {

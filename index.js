@@ -1,10 +1,10 @@
-var crypto = require('crypto')
-var fetchCert = require('./fetch-cert')
-var request = require('request')
-var url = require('url')
-var validator = require('validator')
+var crypto          = require('crypto')
+var fetchCert       = require('./fetch-cert')
+var request         = require('request')
+var url             = require('url')
+var validator       = require('validator')
 var validateCertUri = require('./validate-cert-uri')
-var validateCert = require('./validate-cert')
+var validateCert    = require('./validate-cert')
 
 
 // constants
@@ -34,9 +34,8 @@ function getCert(cert_url, callback) {
 
 
 // returns true if the signature for the request body is valid, false otherwise
-function validateSignature(pem_cert, signature, requestBody) {
-  var verifier
-  verifier = crypto.createVerify('RSA-SHA1')
+function isValidSignature(pem_cert, signature, requestBody) {
+  var verifier = crypto.createVerify('RSA-SHA1')
   verifier.update(requestBody)
   return verifier.verify(pem_cert, signature, SIGNATURE_FORMAT)
 }
@@ -92,12 +91,10 @@ module.exports = function verifier(cert_url, signature, requestBody, callback) {
   }
 
   getCert(cert_url, function(er, pem_cert) {
-    var success
     if (er) {
       return callback(er)
     }
-    success = validateSignature(pem_cert, signature, requestBody)
-    if (success !== true) {
+    if (!isValidSignature(pem_cert, signature, requestBody)) {
       return callback('certificate verification failed')
     }
     callback()

@@ -1,6 +1,6 @@
-var test   = require('tap').test
-var unroll = require('unroll')
-var url    = require('url')
+var test            = require('tap').test
+var unroll          = require('unroll')
+var url             = require('url')
 var validateCertUri = require('../validate-cert-uri')
 
 

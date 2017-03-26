@@ -1,7 +1,8 @@
-var test = require('tap').test
-var url = require('url')
+var test     = require('tap').test
+var url      = require('url')
 var verifier = require('../')
-var sinon = require('sinon')
+var sinon    = require('sinon')
+
 
 test('handle invalid cert_url parameter', function(t) {
   var body, now, signature

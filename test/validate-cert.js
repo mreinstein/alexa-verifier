@@ -1,7 +1,7 @@
-var test = require('tap').test
-var url = require('url')
+var test         = require('tap').test
+var url          = require('url')
 var validateCert = require('../validate-cert')
-var request = require('request')
+var request      = require('request')
 
 
 var oldCertUrl = 'https://s3.amazonaws.com/echo.api/echo-api-cert.pem'
