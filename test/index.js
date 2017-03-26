@@ -4,6 +4,22 @@ var verifier = require('../')
 var sinon    = require('sinon')
 
 
+test('handle missing cert_url parameter', function(t) {
+  var body, now, signature
+  signature = 'JbWZ4iO5ogpq1NhsOqyqq/QRrvc1/XyDwjcBO9wWSk//c11+gImmtWzMG9tDEW40t0Xwt1cnGU93DwUZQzMyzJ5CMi+09qVQUSIHiSmPekKaQRxS0Ibu7l7cXXuCcOBupbkheD/Dsd897Bm5SQwd1cFKRv+PJlpmGKimgh2QmbivogsEkFl8b9SW48kjKWazwj/XP2SrHY0bTvwMTVu7zvTcp0ZenEGlY2DNr5zSd1n6lmS6rgAt1IPwhBzqI0PVMngaM0DQhB0wUPj3QoIUh0IyMVAQzRFbQpS4UGrA4M9a5a+AGy0jCQKiRCI+Yi9iZYEVYvfafF/lyOUHHYcpOg=='
+  now = new Date()
+  body = {
+    request: {
+      timestamp: now.getTime()
+    }
+  }
+  verifier(undefined, signature, JSON.stringify(body), function(er) {
+    t.equal(er, 'missing certificate url')
+    t.end()
+  })
+})
+
+
 test('handle invalid cert_url parameter', function(t) {
   var body, now, signature
   signature = 'JbWZ4iO5ogpq1NhsOqyqq/QRrvc1/XyDwjcBO9wWSk//c11+gImmtWzMG9tDEW40t0Xwt1cnGU93DwUZQzMyzJ5CMi+09qVQUSIHiSmPekKaQRxS0Ibu7l7cXXuCcOBupbkheD/Dsd897Bm5SQwd1cFKRv+PJlpmGKimgh2QmbivogsEkFl8b9SW48kjKWazwj/XP2SrHY0bTvwMTVu7zvTcp0ZenEGlY2DNr5zSd1n6lmS6rgAt1IPwhBzqI0PVMngaM0DQhB0wUPj3QoIUh0IyMVAQzRFbQpS4UGrA4M9a5a+AGy0jCQKiRCI+Yi9iZYEVYvfafF/lyOUHHYcpOg=='
@@ -13,7 +29,7 @@ test('handle invalid cert_url parameter', function(t) {
       timestamp: now.getTime()
     }
   }
-  verifier(void 0, signature, JSON.stringify(body), function(er) {
+  verifier('http://someinsecureurl', signature, JSON.stringify(body), function(er) {
     t.equal(er.indexOf('Certificate URI MUST be https'), 0)
     t.end()
   })
@@ -25,7 +41,7 @@ test('handle invalid body json', function(t) {
   cert_url = 'https://s3.amazonaws.com/echo.api/echo-api-cert.pem'
   signature = 'JbWZ4iO5ogpq1NhsOqyqq/QRrvc1/XyDwjcBO9wWSk//c11+gImmtWzMG9tDEW40t0Xwt1cnGU93DwUZQzMyzJ5CMi+09qVQUSIHiSmPekKaQRxS0Ibu7l7cXXuCcOBupbkheD/Dsd897Bm5SQwd1cFKRv+PJlpmGKimgh2QmbivogsEkFl8b9SW48kjKWazwj/XP2SrHY0bTvwMTVu7zvTcp0ZenEGlY2DNr5zSd1n6lmS6rgAt1IPwhBzqI0PVMngaM0DQhB0wUPj3QoIUh0IyMVAQzRFbQpS4UGrA4M9a5a+AGy0jCQKiRCI+Yi9iZYEVYvfafF/lyOUHHYcpOg=='
   verifier(cert_url, signature, '', function(er) {
-    t.equal(er, 'request body invalid json')
+    t.equal(er, 'missing request (certificate) body')
     t.end()
   })
 })
@@ -68,8 +84,8 @@ test('handle missing signature parameter', function(t) {
       timestamp: now.getTime()
     }
   }
-  verifier(cert_url, void 0, JSON.stringify(body), function(er) {
-    t.equal(er, 'signature is not base64 encoded')
+  verifier(cert_url, undefined, JSON.stringify(body), function(er) {
+    t.equal(er, 'missing signature')
     t.end()
   })
 })
@@ -85,7 +101,7 @@ test('handle invalid signature parameter', function(t) {
     }
   }
   verifier(cert_url, '....$#%@$se', JSON.stringify(body), function(er) {
-    t.equal(er, 'signature is not base64 encoded')
+    t.equal(er, 'invalid signature (not base64 encoded)')
     t.end()
   })
 })
@@ -100,7 +116,7 @@ test('handle invalid base64-encoded signature parameter', function(t) {
     }
   }
   verifier(cert_url, 'aGVsbG8NCg==', JSON.stringify(body), function(er) {
-    t.equal(er, 'certificate verification failed')
+    t.equal(er, 'invalid signature')
     t.end()
   })
 })

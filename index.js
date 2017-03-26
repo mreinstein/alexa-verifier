@@ -69,20 +69,20 @@ function validateTimestamp(requestBody) {
 // certificate validator express middleware for amazon echo
 module.exports = function verifier(cert_url, signature, requestBody, callback) {
   var er
-  if (cert_url == null) {
-    cert_url = ''
+
+  if(!cert_url) {
+    return callback('missing certificate url')
   }
-  if (signature == null) {
-    signature = ''
+  
+  if (!signature) {
+    return callback('missing signature')
   }
-  if (requestBody == null) {
-    requestBody = ''
+  if (!requestBody) {
+    return callback('missing request (certificate) body')
   }
-  if (callback == null) {
-    callback = function() {}
-  }
+  
   if (!validator.isBase64(signature)) {
-    return callback('signature is not base64 encoded')
+    return callback('invalid signature (not base64 encoded)')
   }
   er = validateTimestamp(requestBody)
 
@@ -95,7 +95,7 @@ module.exports = function verifier(cert_url, signature, requestBody, callback) {
       return callback(er)
     }
     if (!isValidSignature(pem_cert, signature, requestBody)) {
-      return callback('certificate verification failed')
+      return callback('invalid signature')
     }
     callback()
   })
