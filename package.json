@@ -13,14 +13,14 @@
   "author": "Mike Reinstein",
   "license": "MIT",
   "dependencies": {
-    "node-forge": "^0.6.48",
+    "node-forge": "^0.7.0",
     "request": "^2.67.0",
-    "validator": "^6.2.0"
+    "validator": "^7.0.0"
   },
   "devDependencies": {
     "nock": "^9.0.2",
-    "tap": "^9.0.3",
+    "tap": "^10.3.0",
     "unroll": "^1.1.0",
-    "sinon": "^1.17.7"
+    "sinon": "^2.1.0"
   }
 }
