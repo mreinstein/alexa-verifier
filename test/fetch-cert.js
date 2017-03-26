@@ -12,7 +12,7 @@ test('fetchCert should ignore response for error HTTP status', function (t) {
   nock('https://s3.amazonaws.com').get(cert_url.path).reply(400, 'Bad Request')
 
   fetchCert(options, function (er, pem_cert) {
-    t.notEqual(er, null)
+    t.notEqual(er, undefined)
     t.equal(pem_cert, undefined)
     t.end()
   })
@@ -25,7 +25,7 @@ test('fetchCert should call back with response body for OK HTTP status', functio
   nock('https://s3.amazonaws.com').get(cert_url.path).reply(200, 'mock pem data')
 
   fetchCert(options, function (er, pem_cert) {
-    t.equal(er, null)
+    t.equal(er, undefined)
     t.equal(pem_cert, 'mock pem data')
     t.end()
   })
@@ -39,7 +39,7 @@ test('fetchCert should hit cache for subsequent certificate reqs', function (t) 
   nock('https://s3.amazonaws.com').get(cert_url.path).reply(200, 'mock pem data')
 
   fetchCert(options, function (er, pem_cert, servedFromCache) {
-    t.equal(er, null)
+    t.equal(er, undefined)
     t.equal(pem_cert, 'mock pem data')
     t.equal(servedFromCache, false)
 

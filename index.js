@@ -43,10 +43,9 @@ function isValidSignature(pem_cert, signature, requestBody) {
 
 // determine if a timestamp is valid for a given request with a tolerance of
 // TIMESTAMP_TOLERANCE seconds
-// returns null if valid, or an error string otherwise
+// returns undefined if valid, or an error string otherwise
 function validateTimestamp(requestBody) {
   var d, e, error, now, oldestTime, request_json
-  request_json = null
   try {
     request_json = JSON.parse(requestBody)
   } catch (error) {
@@ -62,7 +61,6 @@ function validateTimestamp(requestBody) {
   if (d.getTime() < oldestTime) {
     return 'Request is from more than ' + TIMESTAMP_TOLERANCE + ' seconds ago'
   }
-  return null
 }
 
 

@@ -98,8 +98,8 @@ function createInvalidCert() {
 }
 
 test('fails on invalid pem cert parameter', function(t) {
-  validateCert(null, function(er) {
-    t.assert(er !== null, 'Errot should have been thrown')
+  validateCert(undefined, function(er) {
+    t.assert(er !== undefined, 'Error should have been thrown')
     t.end()
   })
 })

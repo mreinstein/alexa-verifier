@@ -12,7 +12,7 @@ module.exports = function fetchCert(options, callback) {
   var servedFromCache = false
   if (cachedResponse) {
     servedFromCache = true
-    callback(null, cachedResponse, servedFromCache)
+    callback(undefined, cachedResponse, servedFromCache)
     return
   }
 
@@ -20,7 +20,7 @@ module.exports = function fetchCert(options, callback) {
     var statusCode
     if (response && 200 === response.statusCode) {
       cache[url.href] = body
-      callback(null, body, servedFromCache)
+      callback(undefined, body, servedFromCache)
     } else {
       statusCode = response ? response.statusCode : 0
       callback('Failed to download certificate at: ' + url.href + '. Response code: ' + statusCode + ', error: ' + er)
