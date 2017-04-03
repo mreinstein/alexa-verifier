@@ -1,6 +1,6 @@
 {
   "name": "alexa-verifier",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Verify HTTP requests sent to an Alexa skill are sent from Amazon",
   "main": "index.js",
   "repository": {
