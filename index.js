@@ -23,12 +23,12 @@ function getCert(cert_url, callback) {
       return callback(er)
     }
 
-    var validationError = validateCert(pem_cert)
-    if (validationError) {
+    er = validateCert(pem_cert)
+    if (er) {
       return callback(er)
     }
     
-    callback(validationError, pem_cert)
+    callback(er, pem_cert)
   })
 }
 
