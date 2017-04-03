@@ -1,8 +1,7 @@
 var request = require('request')
 
 
-// Default in-memory cache for downloaded certificates,
-// used if no cache is explicitely passed.
+// default in-memory cache for downloaded certificates
 var globalCache = {}
 
 module.exports = function fetchCert(options, callback) {
@@ -12,7 +11,7 @@ module.exports = function fetchCert(options, callback) {
   var servedFromCache = false
   if (cachedResponse) {
     servedFromCache = true
-    callback(undefined, cachedResponse, servedFromCache)
+    process.nextTick(callback, undefined, cachedResponse, servedFromCache)
     return
   }
 

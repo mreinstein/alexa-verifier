@@ -2,9 +2,9 @@ var crypto          = require('crypto')
 var fetchCert       = require('./fetch-cert')
 var request         = require('request')
 var url             = require('url')
-var validator       = require('validator')
-var validateCertUri = require('./validate-cert-uri')
 var validateCert    = require('./validate-cert')
+var validateCertUri = require('./validate-cert-uri')
+var validator       = require('validator')
 
 
 // constants
@@ -15,7 +15,7 @@ function getCert(cert_url, callback) {
   var options = { url: url.parse(cert_url) }
   var result = validateCertUri(options.url)
   if (result !== true) {
-    return callback(result)
+    return process.nextTick(callback, result)
   }
 
   fetchCert(options, function(er, pem_cert) {
@@ -23,12 +23,12 @@ function getCert(cert_url, callback) {
       return callback(er)
     }
 
-    validateCert(pem_cert, function(er) {
-      if (er) {
-        return callback(er)
-      }
-      callback(er, pem_cert)
-    })
+    var validationError = validateCert(pem_cert)
+    if (validationError) {
+      return callback(er)
+    }
+    
+    callback(validationError, pem_cert)
   })
 }
 
@@ -69,23 +69,23 @@ module.exports = function verifier(cert_url, signature, requestBody, callback) {
   var er
 
   if(!cert_url) {
-    return callback('missing certificate url')
+    return process.nextTick(callback, 'missing certificate url')
   }
   
   if (!signature) {
-    return callback('missing signature')
+    return process.nextTick(callback, 'missing signature')
   }
   if (!requestBody) {
-    return callback('missing request (certificate) body')
+    return process.nextTick(callback, 'missing request (certificate) body')
   }
   
   if (!validator.isBase64(signature)) {
-    return callback('invalid signature (not base64 encoded)')
+    return process.nextTick(callback, 'invalid signature (not base64 encoded)')
   }
   er = validateTimestamp(requestBody)
 
   if (er) {
-    return callback(er)
+    return process.nextTick(callback, er)
   }
 
   getCert(cert_url, function(er, pem_cert) {
