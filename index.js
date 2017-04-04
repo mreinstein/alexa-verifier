@@ -36,7 +36,7 @@ function getCert(cert_url, callback) {
 // returns true if the signature for the request body is valid, false otherwise
 function isValidSignature(pem_cert, signature, requestBody) {
   var verifier = crypto.createVerify('RSA-SHA1')
-  verifier.update(requestBody)
+  verifier.update(requestBody,'utf8')
   return verifier.verify(pem_cert, signature, SIGNATURE_FORMAT)
 }
 
