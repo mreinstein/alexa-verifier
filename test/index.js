@@ -157,3 +157,46 @@ test('handle valid signature', function(t) {
     t.end()
   });
 })
+test('handle valid signature with double byte utf8 encodings', function(t) {
+  var ts = '2017-04-05T12:02:36Z';
+  var now = new Date(ts);
+  var clock = sinon.useFakeTimers(now.getTime());
+  var cert_url = 'https://s3.amazonaws.com/echo.api/echo-api-cert-4.pem' // latest valid cert
+  var signature = 'WLShxe8KMwHUt8hVD5+iE4tDO+J8Li21yocDWnq8LVRpE2PMMWCxjQzOCzyoFm4i/yW07UKtKQxcnzB44ZEdP6e6HelwBwEdP4lb8jQcc5knk8SuUth4N7cu6Em8FPOdOJdd9idHbO/p8BTb14wgua5n+1SDKHm+wPikOVsfCMYsXcwRWx5FsgP1wVPrDsCHN/ISiCXz+UuMnd6H0uRNdLZ/x/ikPkknh+P1kuFa2a2LN4r57IwBDAxkdf9MzXEexSOO0nWLnyJY2VAFB+O7JKE39CwMJ1+YDOwTTTLjilkCnSlfnr6DP4HPGHnYhh2HQZle8UBrSDm4ntflErpISQ==';
+  var body = {
+   "version":"1.0",
+   "session":{
+      "new":true,
+      "sessionId":"SessionId.07e59233-1f59-43f9-bfc1-ac3ae3b843c6",
+      "application":{
+         "applicationId":"amzn1.ask.skill.5535124f-0d41-472a-be31-589b1d3d04bf"
+      },
+      "attributes":{
+
+      },
+      "user":{
+         "userId":"amzn1.ask.account.AGDZF2M6WHR5KHCXH5ODUYS6VUFUKNI2TABAZSUABKCMIEILVW5ZVME7OI2IOPPV4V7DAYVHMU2CMABL4HTCF7R33N2D6OH7QBEVTSGJUCYZPFX4EQO56TRHEHYUME3BSSDETEJUFFGB4JZBB6OCNQ2A7EKQHW6JQL5YK2HMIDH4ADCCQRJ24SFWBMENZUDPXWN2UNLP42EA4FQ"
+      }
+   },
+   "request":{
+      "type":"IntentRequest",
+      "requestId":"EdwRequestId.5581fcba-e41a-4059-a9d7-eb7b46f2a543",
+      "timestamp":"2017-04-05T12:02:36Z",
+      "locale":"en-US",
+      "intent":{
+         "name":"Ask_term_info",
+         "slots":{
+            "termslot":{
+               "name":"termslot",
+               "value":"Pokémon"
+            }
+         }
+      }
+   }
+};
+  verifier(cert_url, signature, JSON.stringify(body), function(er) {
+    t.equal(er, undefined);
+    clock.restore();
+    t.end()
+  });
+})
