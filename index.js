@@ -27,7 +27,7 @@ function getCert(cert_url, callback) {
     if (er) {
       return callback(er)
     }
-    
+
     callback(er, pem_cert)
   })
 }
@@ -36,7 +36,7 @@ function getCert(cert_url, callback) {
 // returns true if the signature for the request body is valid, false otherwise
 function isValidSignature(pem_cert, signature, requestBody) {
   var verifier = crypto.createVerify('RSA-SHA1')
-  verifier.update(requestBody,'utf8')
+  verifier.update(requestBody, 'utf8')
   return verifier.verify(pem_cert, signature, SIGNATURE_FORMAT)
 }
 
@@ -71,14 +71,14 @@ module.exports = function verifier(cert_url, signature, requestBody, callback) {
   if(!cert_url) {
     return process.nextTick(callback, 'missing certificate url')
   }
-  
+
   if (!signature) {
     return process.nextTick(callback, 'missing signature')
   }
   if (!requestBody) {
     return process.nextTick(callback, 'missing request (certificate) body')
   }
-  
+
   if (!validator.isBase64(signature)) {
     return process.nextTick(callback, 'invalid signature (not base64 encoded)')
   }
