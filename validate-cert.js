@@ -16,13 +16,13 @@ module.exports = function validate(pem_cert) {
     var currTime = new Date().getTime()
     var notAfterTime = new Date(cert.validity.notAfter).getTime()
     if (notAfterTime <= currTime) {
-      return 'certificate Not After check failed'
+      return 'invalid Not After date (date already passed)'
     }
 
     // ensure that current time is later than cert's "Not Before" time
     var notBeforeTime = new Date(cert.validity.notBefore).getTime()
     if (currTime <= notBeforeTime) {
-      return 'certificate Not Before check failed'
+      return 'invalid Not Before date (date has not occured)'
     }
   } catch (e) {
     return e
