@@ -12,12 +12,19 @@ module.exports = function validate(pem_cert) {
       return 'subjectAltName Check Failed'
     }
 
+    // check that the signing certificate has not expired (examine Not After)
+    var now = new Date().getTime()
     var notAfter = new Date(cert.validity.notAfter)
-    var remainingDays = notAfter.getTime() - new Date().getTime()
-    // check that the signing certificate has not expired (examine both the Not
-    // Before and Not After dates)
-    if (remainingDays < 1) {
-      return 'certificate expiration check failed'
+    var timeUntilAfter = notAfter.getTime() - now
+    if (timeUntilAfter < 1) {
+      return 'certificate Not After check failed'
+    }
+
+    // check that the signing certificate has not expired (examine Not Before)
+    var notBefore = new Date(cert.validity.notBefore)
+    var timeSinceBefore = now - notBefore.getTime()
+    if (timeSinceBefore < 1) {
+      return 'certificate Not Before check failed'
     }
   } catch (e) {
     return e
