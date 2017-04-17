@@ -108,10 +108,10 @@ test('fails on non amazon subject common name', function(t) {
   t.end()
 })
 
-test('fails on expired certificate', function(t) {
+test('fails on expired certificate (Not After)', function(t) {
   getEchoCert(oldCertUrl, function(err, pem) {
     var er = validateCert(pem)
-    t.assert(er === 'certificate expiration check failed', 'Certificate is expired')
+    t.assert(er === 'invalid Not After date (date already passed)', 'Certificate is expired (Not After)')
     t.end()
   })
 })
