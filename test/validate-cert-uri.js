@@ -15,8 +15,7 @@ unroll('verifier.validateCertUri should be #valid for #url',
     if (valid === true) {
       t.equal(result, true)
     } else {
-      // I don't care too much about the error message, so do negated
-      // comparison with 'true':
+      // I don't need the error message, do negated comparison with 'true'
       t.notEqual(result, true)
     }
     t.end()

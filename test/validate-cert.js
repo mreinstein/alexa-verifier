@@ -1,19 +1,9 @@
-var pki          = require('node-forge').pki
-var request      = require('request')
-var test         = require('tap').test
-var url          = require('url')
-var validateCert = require('../validate-cert')
+var fs       = require('fs')
+var pki      = require('node-forge').pki
+var test     = require('tap').test
+var url      = require('url')
+var validate = require('../validate-cert')
 
-
-var oldCertUrl = 'https://s3.amazonaws.com/echo.api/echo-api-cert.pem'
-
-var latestCertUrl = 'https://s3.amazonaws.com/echo.api/echo-api-cert-4.pem'
-
-function getEchoCert(certUrl, callback) {
-  request(certUrl, function(err, res, body) {
-    callback(err, body)
-  })
-}
 
 function createInvalidCert() {
   var keys = pki.rsa.generateKeyPair(512)
@@ -90,36 +80,28 @@ function createInvalidCert() {
   // self-sign certificate
   cert.sign(keys.privateKey)
 
-  var pem = pki.certificateToPem(cert)
-  return pem
+  return pki.certificateToPem(cert)
 }
 
 test('fails on invalid pem cert parameter', function(t) {
-  var er = validateCert(undefined)
-  t.assert(er !== undefined, 'Error should have been thrown')
+  t.assert(validate(undefined) !== undefined, 'Error should have been thrown')
   t.end()
 })
 
 test('fails on non amazon subject common name', function(t) {
   var pem = createInvalidCert()
-
-  var er = validateCert(pem)
-  t.assert(er === 'subjectAltName Check Failed', 'Certificate must be from amazon')
+  t.assert(validate(pem) === 'subjectAltName Check Failed', 'Certificate must be from amazon')
   t.end()
 })
 
 test('fails on expired certificate (Not After)', function(t) {
-  getEchoCert(oldCertUrl, function(err, pem) {
-    var er = validateCert(pem)
-    t.assert(er === 'invalid Not After date (date already passed)', 'Certificate is expired (Not After)')
-    t.end()
-  })
+  var pem = fs.readFileSync(__dirname + '/cert-expired.pem')
+  t.assert(validate(pem) === 'invalid certificate validity (past expired date)')
+  t.end()
 })
 
 test('approves valid certifcate', function(t) {
-  getEchoCert(latestCertUrl, function(err, pem) {
-    var er = validateCert(pem)
-    t.assert(!er, 'Certificate should be valid')
-    t.end()
-  })
+  var pem = fs.readFileSync(__dirname + '/cert-latest.pem')
+  t.assert(validate(pem) === undefined, 'Certificate should be valid')
+  t.end()
 })
