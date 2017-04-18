@@ -6,10 +6,18 @@ module.exports = function validate(pem_cert) {
   try {
     var cert = pki.certificateFromPem(pem_cert)
 
-    // check that the domain echo-api.amazon.com is present in the Subject
-    // Alternative Names (SANs) section of the signing certificate
-    if (cert.subject.getField('CN').value.indexOf('echo-api.amazon.com') === -1) {
-      return 'subjectAltName Check Failed'
+    // check that cert has a Subject Alternative Names (SANs) section
+    var altNameExt = cert.getExtension("subjectAltName")
+    if (!altNameExt) {
+      return 'invalid certificate validity (subjectAltName extension not present)'
+    }
+
+    // check that the domain echo-api.amazon.com is present in SANs section
+    var domainExists = altNameExt.altNames.some(function(name) {
+      return name.value.indexOf('echo-api.amazon.com') >= 0
+    })
+    if(!domainExists) {
+      return 'invalid certificate validity (correct domain not found in subject alternative names)'
     }
 
     var currTime = new Date().getTime()
