@@ -88,9 +88,9 @@ test('fails on invalid pem cert parameter', function(t) {
   t.end()
 })
 
-test('fails on non amazon subject common name', function(t) {
+test('fails on non amazon subject alt name', function(t) {
   var pem = createInvalidCert()
-  t.assert(validate(pem) === 'subjectAltName Check Failed', 'Certificate must be from amazon')
+  t.assert(validate(pem) === 'invalid certificate validity (correct domain not found in subject alternative names)', 'Certificate must be from amazon')
   t.end()
 })
 
