@@ -1,5 +1,7 @@
 var pki = require('node-forge').pki
 
+// constants
+var VALID_CERT_SAN = 'echo-api.amazon.com'
 
 // @returns an error string if certificate isn't valid, undefined otherwise
 module.exports = function validate(pem_cert) {
@@ -14,7 +16,7 @@ module.exports = function validate(pem_cert) {
 
     // check that the domain echo-api.amazon.com is present in SANs section
     var domainExists = altNameExt.altNames.some(function(name) {
-      return name.value.indexOf('echo-api.amazon.com') >= 0
+      return name.value.indexOf(VALID_CERT_SAN) >= 0
     })
     if(!domainExists) {
       return 'invalid certificate validity (correct domain not found in subject alternative names)'
