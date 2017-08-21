@@ -15,13 +15,13 @@
   "dependencies": {
     "node-forge": "^0.7.0",
     "request": "^2.67.0",
-    "validator": "^7.0.0"
+    "validator": "^8.0.0"
   },
   "devDependencies": {
     "nock": "^9.0.2",
     "tap": "^10.3.0",
     "unroll": "^1.1.0",
-    "sinon": "^2.1.0"
+    "sinon": "^3.2.1"
   },
   "engine": {
     "node": ">=1"

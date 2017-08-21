@@ -1,3 +1,6 @@
 .DS_Store
 *.log
 node_modules
+
+# Don't checkin package-lock.json for libraries
+package-lock.json
