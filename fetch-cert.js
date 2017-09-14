@@ -3,8 +3,7 @@
 var request = require('request')
 
 
-// default in-memory cache for downloaded certificates
-var globalCache = {}
+var globalCache = {} // default in-memory cache for downloaded certificates
 
 module.exports = function fetchCert(options, callback) {
   var url = options.url
