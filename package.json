@@ -21,7 +21,7 @@
     "nock": "^9.0.2",
     "sinon": "^3.2.1",
     "tap": "^10.3.0",
-    "unroll": "github:mreinstein/unroll"
+    "unroll": "1.2.2"
   },
   "engine": {
     "node": ">=1"
