@@ -1,3 +1,5 @@
+'use strict'
+
 var pki = require('node-forge').pki
 
 // constants

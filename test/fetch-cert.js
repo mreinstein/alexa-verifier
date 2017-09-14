@@ -1,3 +1,5 @@
+'use strict'
+
 var fetchCert = require('../fetch-cert')
 var nock      = require('nock')
 var test      = require('tap').test

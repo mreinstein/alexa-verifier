@@ -1,3 +1,5 @@
+'use strict'
+
 var test     = require('tap').test
 var url      = require('url')
 var verifier = require('../')

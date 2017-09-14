@@ -1,3 +1,5 @@
+'use strict'
+
 var crypto          = require('crypto')
 var fetchCert       = require('./fetch-cert')
 var request         = require('request')

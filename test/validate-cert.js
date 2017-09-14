@@ -1,3 +1,5 @@
+'use strict'
+
 var fs       = require('fs')
 var pki      = require('node-forge').pki
 var test     = require('tap').test

@@ -1,3 +1,5 @@
+'use strict'
+
 // constants
 var VALID_CERT_HOSTNAME   = 's3.amazonaws.com'
 var VALID_CERT_PATH_START = '/echo.api/'

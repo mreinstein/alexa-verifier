@@ -1,3 +1,5 @@
+'use strict'
+
 var test            = require('tap').test
 var unroll          = require('unroll')
 var url             = require('url')
