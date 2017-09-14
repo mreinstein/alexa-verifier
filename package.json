@@ -19,9 +19,9 @@
   },
   "devDependencies": {
     "nock": "^9.0.2",
+    "sinon": "^3.2.1",
     "tap": "^10.3.0",
-    "unroll": "^1.1.0",
-    "sinon": "^3.2.1"
+    "unroll": "github:mreinstein/unroll"
   },
   "engine": {
     "node": ">=1"
