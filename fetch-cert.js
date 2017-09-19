@@ -1,6 +1,6 @@
 'use strict'
 
-var request = require('request')
+var https = require('https')
 
 
 var globalCache = {} // default in-memory cache for downloaded certificates
@@ -16,14 +16,27 @@ module.exports = function fetchCert(options, callback) {
     return
   }
 
-  request.get(url.href, function(er, response, body) {
+  var body = ''
+
+  https.get(url.href, function(response) {
     var statusCode
-    if (response && 200 === response.statusCode) {
+
+    if (!response || 200 !== response.statusCode) {
+      statusCode = response ? response.statusCode : 0
+      return callback('Failed to download certificate at: ' + url.href + '. Response code: ' + statusCode)
+    }
+
+    response.setEncoding('utf8')
+    response.on('data', function (chunk) {
+      body += chunk
+    })
+    response.on('end', function () {
       cache[url.href] = body
       callback(undefined, body, servedFromCache)
-    } else {
-      statusCode = response ? response.statusCode : 0
-      callback('Failed to download certificate at: ' + url.href + '. Response code: ' + statusCode + ', error: ' + er)
-    }
+    })
+  })
+  .on('error', function(er) {
+    console.error('balls2!', er)
+    callback('Failed to download certificate at: ' + url.href +'. Error: ' + er)
   })
 }
