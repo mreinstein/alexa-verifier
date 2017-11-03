@@ -36,7 +36,6 @@ module.exports = function fetchCert(options, callback) {
     })
   })
   .on('error', function(er) {
-    console.error('balls2!', er)
     callback('Failed to download certificate at: ' + url.href +'. Error: ' + er)
   })
 }
