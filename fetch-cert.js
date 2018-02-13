@@ -6,9 +6,8 @@ var https = require('https')
 var globalCache = {} // default in-memory cache for downloaded certificates
 
 module.exports = function fetchCert(options, callback) {
-  var url = options.url
   var cache = options.cache || globalCache
-  var cachedResponse = cache[url.href]
+  var cachedResponse = cache[options.request.href]
   var servedFromCache = false
   if (cachedResponse) {
     servedFromCache = true
@@ -18,12 +17,12 @@ module.exports = function fetchCert(options, callback) {
 
   var body = ''
 
-  https.get(url.href, function(response) {
+  https.get(options.request, function(response) {
     var statusCode
 
     if (!response || 200 !== response.statusCode) {
       statusCode = response ? response.statusCode : 0
-      return callback('Failed to download certificate at: ' + url.href + '. Response code: ' + statusCode)
+      return callback('Failed to download certificate at: ' + options.request.href + '. Response code: ' + statusCode)
     }
 
     response.setEncoding('utf8')
@@ -31,11 +30,11 @@ module.exports = function fetchCert(options, callback) {
       body += chunk
     })
     response.on('end', function () {
-      cache[url.href] = body
+      cache[options.request.href] = body
       callback(undefined, body, servedFromCache)
     })
   })
   .on('error', function(er) {
-    callback('Failed to download certificate at: ' + url.href +'. Error: ' + er)
+    callback('Failed to download certificate at: ' + options.request.href +'. Error: ' + er)
   })
 }

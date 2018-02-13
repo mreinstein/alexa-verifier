@@ -6,6 +6,7 @@ var url             = require('url')
 var validateCert    = require('./validate-cert')
 var validateCertUri = require('./validate-cert-uri')
 var validator       = require('validator')
+var HttpsProxyAgent = require('https-proxy-agent')
 
 
 // constants
@@ -13,8 +14,14 @@ var TIMESTAMP_TOLERANCE = 150
 var SIGNATURE_FORMAT = 'base64'
 
 function getCert(cert_url, callback) {
-  var options = { url: url.parse(cert_url) }
-  var result = validateCertUri(options.url)
+  var options = {};
+  options.request = url.parse(cert_url);
+  var proxy = process.env.http_proxy || process.env.HTTP_PROXY
+  if(proxy) {
+    var agent = new HttpsProxyAgent(proxy)
+    options.request.agent = agent
+    }
+  var result = validateCertUri(options.request)
   if (result !== true) {
     return process.nextTick(callback, result)
   }
