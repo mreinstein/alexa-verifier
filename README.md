@@ -33,3 +33,10 @@ verifier(cert_url, signature, requestRawBody, callback)
 * `signature` signature of the request (from HTTP request header named `signature`)
 * `requestRawBody`  full body string from POST request
 * `callback`  completion function. has 1 argument which indicates error. falsey when verification passes
+
+### using with a proxy
+If you're hosting your web service behind a proxy, you may have trouble retrieving the Amazon cert from S3. As long as you have your http_proxy/HTTP_PROXY environment variable set, the https module will update the agent to use your proxy.
+
+```
+http_proxy=http://<your-proxy>:<port>
+```
