@@ -2,7 +2,8 @@
 
 var test = require('tap').test
 var url = require('url')
-var verifier = require('../')
+var rewire = require('rewire')
+var verifier = rewire('../')
 var sinon = require('sinon')
 
 
@@ -189,8 +190,8 @@ test('handle valid signature with double byte utf8 encodings', function (t) {
           }
         }
       }
-   }
-}
+    }
+  }
   verifier(cert_url, signature, JSON.stringify(body), function (er) {
     t.equal(er, undefined)
     clock.restore()
@@ -231,10 +232,10 @@ test('invocation', function (t) {
   }
 
   var result = verifier(cert_url, signature, JSON.stringify(body))
-  result.catch(function(er) { })
+  result.catch(function (er) {})
   t.assert(result instanceof Promise, 'omitting callback returns a promise')
 
-  var callbackResult = verifier(cert_url, signature, JSON.stringify(body), function(er) { })
+  var callbackResult = verifier(cert_url, signature, JSON.stringify(body), function (er) {})
 
   t.equal(callbackResult, undefined, 'including callback does not return a promise')
 
@@ -282,4 +283,41 @@ test('invocation', function (t) {
   t.equal(callbackResult, undefined, 'including callback does not return a promise')
 
   t.end()
+})
+
+test('should not build proxy agent if http_proxy env variable is missing', function (t) {
+  delete process.env.http_proxy;
+  delete process.env.HTTP_PROXY;
+  var getCert = verifier.__get__('getCert')
+  var revertfetch = verifier.__set__('fetchCert', function (options, callback) {
+    callback(null, options.request);
+  })
+  var revertValidate = verifier.__set__('validateCert', function (cert) {
+    return false;
+  })
+  getCert(cert_url, function (er, result) {
+    t.equal(result.href, cert_url, 'should attempt to retrieve cert without proxy')
+    t.equal(result.agent, undefined, 'should not set proxy agent without proxy env variable')
+    t.end()
+  })
+  revertfetch()
+  revertValidate()
+})
+
+test('should build proxy agent if http_proxy env variable is set', function (t) {
+  process.env.http_proxy = 'https://someproxy.com';
+  var getCert = verifier.__get__('getCert');
+  var revertfetch = verifier.__set__('fetchCert', function (options, callback) {
+    callback(null, options.request);
+  })
+  var revertValidate = verifier.__set__('validateCert', function (cert) {
+    return false;
+  })
+  getCert(cert_url, function (er, result) {
+    t.equal(result.href, cert_url, 'should attempt to retrieve cert')
+    t.equal(result.agent.proxy.host, 'someproxy.com', 'should set proxy agent proxy env variable')
+    t.end()
+  })
+  revertfetch()
+  revertValidate()
 })
