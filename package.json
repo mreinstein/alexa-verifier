@@ -1,12 +1,19 @@
 {
   "name": "alexa-verifier",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Verify HTTP requests sent to an Alexa skill are sent from Amazon",
   "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/mreinstein/alexa-verifier.git"
   },
+  "keywords": [
+    "alexa",
+    "amazon",
+    "echo",
+    "skill",
+    "validation"
+  ],
   "scripts": {
     "test": "tap ./test"
   },
