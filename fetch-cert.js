@@ -5,7 +5,7 @@ var https = require('https')
 
 var globalCache = {} // default in-memory cache for downloaded certificates
 
-module.exports = function fetchCert(options, callback) {
+module.exports = function fetchCert (options, callback) {
   var url = options.url
   var cache = options.cache || globalCache
   var cachedResponse = cache[url.href]
@@ -18,7 +18,7 @@ module.exports = function fetchCert(options, callback) {
 
   var body = ''
 
-  https.get(url.href, function(response) {
+  https.get(url.href, function (response) {
     var statusCode
 
     if (!response || 200 !== response.statusCode) {

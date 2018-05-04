@@ -7,7 +7,7 @@ var url      = require('url')
 var validate = require('../validate-cert')
 
 
-function createInvalidCert() {
+function createInvalidCert () {
   var keys = pki.rsa.generateKeyPair(512)
   var cert = pki.createCertificate()
   cert.publicKey = keys.publicKey
@@ -85,24 +85,24 @@ function createInvalidCert() {
   return pki.certificateToPem(cert)
 }
 
-test('fails on invalid pem cert parameter', function(t) {
+test('fails on invalid pem cert parameter', function (t) {
   t.assert(validate(undefined) !== undefined, 'Error should have been thrown')
   t.end()
 })
 
-test('fails on non amazon subject alt name', function(t) {
+test('fails on non amazon subject alt name', function (t) {
   var pem = createInvalidCert()
   t.assert(validate(pem) === 'invalid certificate validity (correct domain not found in subject alternative names)', 'Certificate must be from amazon')
   t.end()
 })
 
-test('fails on expired certificate (Not After)', function(t) {
+test('fails on expired certificate (Not After)', function (t) {
   var pem = fs.readFileSync(__dirname + '/cert-expired.pem')
   t.assert(validate(pem) === 'invalid certificate validity (past expired date)')
   t.end()
 })
 
-test('approves valid certifcate', function(t) {
+test('approves valid certifcate', function (t) {
   var pem = fs.readFileSync(__dirname + '/cert-latest.pem')
   t.assert(validate(pem) === undefined, 'Certificate should be valid')
   t.end()
