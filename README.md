@@ -38,7 +38,7 @@ Ommiting a callback function returns a promise:
 const verifier = require('alexa-verifier')
 
 
-const verifyPromise = verifier(cert_url, signature, requestRawBody, callback)
+const verifyPromise = verifier(cert_url, signature, requestRawBody)
 ```
 
 
