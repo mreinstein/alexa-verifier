@@ -61,8 +61,7 @@ function validateTimestamp (requestBody) {
 }
 
 
-// certificate validator express middleware for amazon echo
-module.exports = function verifier (cert_url, signature, requestBody, callback) {
+function verifier (cert_url, signature, requestBody, callback) {
   var er
 
   if(!cert_url)
@@ -90,5 +89,20 @@ module.exports = function verifier (cert_url, signature, requestBody, callback) 
       return callback('invalid signature')
 
     callback()
+  })
+}
+
+
+// certificate validator for amazon echo
+module.exports = function (cert_url, signature, requestBody, cb) {
+  if(cb)
+    return verifier(cert_url, signature, requestBody, cb)
+
+  return new Promise(function( resolve, reject) {
+     verifier(cert_url, signature, requestBody, function(er) {
+        if(er)
+          return reject(er)
+        resolve()
+     })
   })
 }

@@ -22,12 +22,25 @@ This module provides a function to handle this validation.
 
 ### usage
 
+You may include a callback function, in the standard node error argument-first format:
+
 ```javascript
 const verifier = require('alexa-verifier')
 
 
-verifier(cert_url, signature, requestRawBody, callback)
+verifier(cert_url, signature, requestRawBody, function callbackFn(er) {
+  // if er, something went wrong
+})
 ```
+
+Ommiting a callback function returns a promise:
+```javascript
+const verifier = require('alexa-verifier')
+
+
+const verifyPromise = verifier(cert_url, signature, requestRawBody, callback)
+```
+
 
 * `cert_url`  full url of the certificate to verify (from HTTP request header named `signaturecertchainurl`)
 * `signature` signature of the request (from HTTP request header named `signature`)
