@@ -22,20 +22,20 @@ function getCert(cert_url, callback) {
     options.request.agent = agent
   }
   var result = validateCertUri(options.request)
-  if (result !== true) {
+  if (result !== true)
     return process.nextTick(callback, result)
 
-    fetchCert(options, function (er, pem_cert) {
-      if (er)
-        return callback(er)
+  fetchCert(options, function (er, pem_cert) {
+    if (er)
+      return callback(er)
 
-      er = validateCert(pem_cert)
-      if (er)
-        return callback(er)
+    er = validateCert(pem_cert)
+    if (er)
+      return callback(er)
 
-      callback(er, pem_cert)
-    })
-  }
+    callback(er, pem_cert)
+  })
+
 }
 
 
