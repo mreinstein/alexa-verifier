@@ -22,11 +22,21 @@ This module provides a function to handle this validation.
 
 ### usage
 
+arguments
+* `cert_url`  full url of the certificate to verify (from HTTP request header named `signaturecertchainurl`)
+* `signature` signature of the request (from HTTP request header named `signature`)
+* `requestRawBody`  full body string from POST request
+* `callback`  (optional) completion function. has 1 argument which indicates error. falsey when verification passes
+
+You may include a callback function, in the standard node error argument-first format:
+
 ```javascript
 const verifier = require('alexa-verifier')
 
 
-verifier(cert_url, signature, requestRawBody, callback)
+verifier(cert_url, signature, requestRawBody, function callbackFn(er) {
+  // if er, something went wrong
+})
 ```
 
 * `cert_url`  full url of the certificate to verify (from HTTP request header named `signaturecertchainurl`)
@@ -39,4 +49,11 @@ If you're hosting your web service behind a proxy, you may have trouble retrievi
 
 ```
 http_proxy=http://<your-proxy>:<port>
+```
+Ommiting a callback function returns a promise:
+```javascript
+const verifier = require('alexa-verifier')
+
+
+const verifyPromise = verifier(cert_url, signature, requestRawBody)
 ```

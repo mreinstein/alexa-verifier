@@ -9,7 +9,7 @@ var validateCertUri = require('../validate-cert-uri')
 unroll.use(test)
 
 unroll('verifier.validateCertUri should be #valid for #url',
-  function(t, testArgs) {
+  function (t, testArgs) {
     var cert_uri = url.parse(testArgs['url'])
     var result = validateCertUri(cert_uri)
     var valid = testArgs['valid']
