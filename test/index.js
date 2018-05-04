@@ -1,9 +1,10 @@
 'use strict'
 
-var test     = require('tap').test
-var url      = require('url')
-var verifier = require('../')
-var sinon    = require('sinon')
+var test = require('tap').test
+var url = require('url')
+var rewire = require('rewire')
+var verifier = rewire('../')
+var sinon = require('sinon')
 
 
 var cert_url = 'https://s3.amazonaws.com/echo.api/echo-api-cert-5.pem' // latest valid cert
@@ -42,7 +43,7 @@ test('handle invalid cert_url parameter', function (t) {
 
 test('handle invalid body json', function (t) {
   var signature = 'JbWZ4iO5ogpq1NhsOqyqq/QRrvc1/XyDwjcBO9wWSk//c11+gImmtWzMG9tDEW40t0Xwt1cnGU93DwUZQzMyzJ5CMi+09qVQUSIHiSmPekKaQRxS0Ibu7l7cXXuCcOBupbkheD/Dsd897Bm5SQwd1cFKRv+PJlpmGKimgh2QmbivogsEkFl8b9SW48kjKWazwj/XP2SrHY0bTvwMTVu7zvTcp0ZenEGlY2DNr5zSd1n6lmS6rgAt1IPwhBzqI0PVMngaM0DQhB0wUPj3QoIUh0IyMVAQzRFbQpS4UGrA4M9a5a+AGy0jCQKiRCI+Yi9iZYEVYvfafF/lyOUHHYcpOg=='
-  verifier(cert_url, signature, '', function(er) {
+  verifier(cert_url, signature, '', function (er) {
     t.equal(er, 'missing request (certificate) body')
     t.end()
   })
@@ -51,7 +52,7 @@ test('handle invalid body json', function (t) {
 
 test('handle missing timestamp field', function (t) {
   var signature = 'JbWZ4iO5ogpq1NhsOqyqq/QRrvc1/XyDwjcBO9wWSk//c11+gImmtWzMG9tDEW40t0Xwt1cnGU93DwUZQzMyzJ5CMi+09qVQUSIHiSmPekKaQRxS0Ibu7l7cXXuCcOBupbkheD/Dsd897Bm5SQwd1cFKRv+PJlpmGKimgh2QmbivogsEkFl8b9SW48kjKWazwj/XP2SrHY0bTvwMTVu7zvTcp0ZenEGlY2DNr5zSd1n6lmS6rgAt1IPwhBzqI0PVMngaM0DQhB0wUPj3QoIUh0IyMVAQzRFbQpS4UGrA4M9a5a+AGy0jCQKiRCI+Yi9iZYEVYvfafF/lyOUHHYcpOg=='
-  verifier(cert_url, signature, '{}', function(er) {
+  verifier(cert_url, signature, '{}', function (er) {
     t.equal(er, 'Timestamp field not present in request')
     t.end()
   })
@@ -67,7 +68,7 @@ test('handle outdated timestamp field', function (t) {
       timestamp: now.getTime() - 200000
     }
   }
-  verifier(cert_url, signature, JSON.stringify(body), function(er) {
+  verifier(cert_url, signature, JSON.stringify(body), function (er) {
     t.equal(er, 'Request is from more than 150 seconds ago')
     t.end()
   })
@@ -89,7 +90,7 @@ test('handle missing signature parameter', function (t) {
 })
 
 
-test('handle invalid signature parameter', function(t) {
+test('handle invalid signature parameter', function (t) {
   var body, now
   now = new Date()
   body = {
@@ -161,36 +162,36 @@ test('handle valid signature with double byte utf8 encodings', function (t) {
   var cert_url = 'https://s3.amazonaws.com/echo.api/echo-api-cert-4.pem'
   var signature = 'WLShxe8KMwHUt8hVD5+iE4tDO+J8Li21yocDWnq8LVRpE2PMMWCxjQzOCzyoFm4i/yW07UKtKQxcnzB44ZEdP6e6HelwBwEdP4lb8jQcc5knk8SuUth4N7cu6Em8FPOdOJdd9idHbO/p8BTb14wgua5n+1SDKHm+wPikOVsfCMYsXcwRWx5FsgP1wVPrDsCHN/ISiCXz+UuMnd6H0uRNdLZ/x/ikPkknh+P1kuFa2a2LN4r57IwBDAxkdf9MzXEexSOO0nWLnyJY2VAFB+O7JKE39CwMJ1+YDOwTTTLjilkCnSlfnr6DP4HPGHnYhh2HQZle8UBrSDm4ntflErpISQ=='
   var body = {
-   "version":"1.0",
-   "session":{
-      "new":true,
-      "sessionId":"SessionId.07e59233-1f59-43f9-bfc1-ac3ae3b843c6",
-      "application":{
-         "applicationId":"amzn1.ask.skill.5535124f-0d41-472a-be31-589b1d3d04bf"
+    "version": "1.0",
+    "session": {
+      "new": true,
+      "sessionId": "SessionId.07e59233-1f59-43f9-bfc1-ac3ae3b843c6",
+      "application": {
+        "applicationId": "amzn1.ask.skill.5535124f-0d41-472a-be31-589b1d3d04bf"
       },
-      "attributes":{
+      "attributes": {
 
       },
-      "user":{
-         "userId":"amzn1.ask.account.AGDZF2M6WHR5KHCXH5ODUYS6VUFUKNI2TABAZSUABKCMIEILVW5ZVME7OI2IOPPV4V7DAYVHMU2CMABL4HTCF7R33N2D6OH7QBEVTSGJUCYZPFX4EQO56TRHEHYUME3BSSDETEJUFFGB4JZBB6OCNQ2A7EKQHW6JQL5YK2HMIDH4ADCCQRJ24SFWBMENZUDPXWN2UNLP42EA4FQ"
+      "user": {
+        "userId": "amzn1.ask.account.AGDZF2M6WHR5KHCXH5ODUYS6VUFUKNI2TABAZSUABKCMIEILVW5ZVME7OI2IOPPV4V7DAYVHMU2CMABL4HTCF7R33N2D6OH7QBEVTSGJUCYZPFX4EQO56TRHEHYUME3BSSDETEJUFFGB4JZBB6OCNQ2A7EKQHW6JQL5YK2HMIDH4ADCCQRJ24SFWBMENZUDPXWN2UNLP42EA4FQ"
       }
-   },
-   "request":{
-      "type":"IntentRequest",
-      "requestId":"EdwRequestId.5581fcba-e41a-4059-a9d7-eb7b46f2a543",
-      "timestamp":"2017-04-05T12:02:36Z",
-      "locale":"en-US",
-      "intent":{
-         "name":"Ask_term_info",
-         "slots":{
-            "termslot":{
-               "name":"termslot",
-               "value":"Pokémon"
-            }
-         }
+    },
+    "request": {
+      "type": "IntentRequest",
+      "requestId": "EdwRequestId.5581fcba-e41a-4059-a9d7-eb7b46f2a543",
+      "timestamp": "2017-04-05T12:02:36Z",
+      "locale": "en-US",
+      "intent": {
+        "name": "Ask_term_info",
+        "slots": {
+          "termslot": {
+            "name": "termslot",
+            "value": "Pokémon"
+          }
+        }
       }
-   }
-}
+    }
+  }
   verifier(cert_url, signature, JSON.stringify(body), function (er) {
     t.equal(er, undefined)
     clock.restore()
@@ -231,12 +232,92 @@ test('invocation', function (t) {
   }
 
   var result = verifier(cert_url, signature, JSON.stringify(body))
-  result.catch(function(er) { })
+  result.catch(function (er) {})
   t.assert(result instanceof Promise, 'omitting callback returns a promise')
 
-  var callbackResult = verifier(cert_url, signature, JSON.stringify(body), function(er) { })
+  var callbackResult = verifier(cert_url, signature, JSON.stringify(body), function (er) {})
 
   t.equal(callbackResult, undefined, 'including callback does not return a promise')
 
   t.end()
+})
+
+
+test('invocation', function (t) {
+  var ts = '2017-04-05T12:02:36Z'
+  var now = new Date(ts)
+  var clock = sinon.useFakeTimers(now.getTime())
+  var cert_url = 'https://s3.amazonaws.com/echo.api/echo-api-cert-4.pem'
+  var signature = 'Qc8OuaGEHWeL/39XTEDYFbOCufYWpwi45rqmM2R4WaSEYcSXq+hUko/88wv48+6SPUiEddWSEEINJFAFV5auYZsnBzqCK+SO8mGNOGHmLYpcFuSEHI3eA3nDIEARrXTivqqbH/LCPJHc0tqNYr3yPZRIR2mYFndJOxgDNSOooZX+tp2GafHHsjjShCjmePaLxJiGG1DmrL6fyOJoLrzc0olUxLmnJviS6Q5wBir899TMEZ/zX+aiBTt/khVvwIh+hI/PZsRq/pQw4WAvQz1bcnGNamvMA/TKSJtR0elJP+TgCqbVoYisDgQXkhi8/wonkLhs68pN+TurbR7GyC1vxw=='
+  var body = {
+    "version": "1.0",
+    "session": {
+      "new": true,
+      "sessionId": "SessionId.7745e45d-3042-45eb-8e86-cab2cf285daf",
+      "application": {
+        "applicationId": "amzn1.ask.skill.75c997b8-610f-4eb4-bf2e-95810e15fba2"
+      },
+      "attributes": {},
+      "user": {
+        "userId": "amzn1.ask.account.AF6Z7574YHBQCNNTJK45QROUSCUJEHIYAHZRP35FVU673VDGDKV4PH2M52PX4XWGCSYDM66B6SKEEFJN6RYWN7EME3FKASDIG7DPNGFFFNTN4ZT6B64IIZKSNTXQXEMVBXMA7J3FN3ERT2A4EDYFUYMGM4NSQU4RTAQOZWDD2J7JH6P2ROP2A6QEGLNLZDXNZU2DL7BKGCVLMNA"
+      }
+    },
+    "request": {
+      "type": "IntentRequest",
+      "requestId": "EdwRequestId.fa7428b7-75d0-44c8-aebb-4c222ed48ebe",
+      "timestamp": ts,
+      "locale": "en-US",
+      "intent": {
+        "name": "HelloWorld"
+      },
+      "inDialog": false
+    }
+  }
+
+  var result = verifier(cert_url, signature, JSON.stringify(body))
+  result.catch(function (er) {})
+  t.assert(result instanceof Promise, 'omitting callback returns a promise')
+
+  var callbackResult = verifier(cert_url, signature, JSON.stringify(body), function (er) {})
+
+  t.equal(callbackResult, undefined, 'including callback does not return a promise')
+
+  t.end()
+})
+
+test('should not build proxy agent if http_proxy env variable is missing', function (t) {
+  delete process.env.http_proxy;
+  delete process.env.HTTP_PROXY;
+  var getCert = verifier.__get__('getCert')
+  var revertfetch = verifier.__set__('fetchCert', function (options, callback) {
+    callback(null, options.request);
+  })
+  var revertValidate = verifier.__set__('validateCert', function (cert) {
+    return false;
+  })
+  getCert(cert_url, function (er, result) {
+    t.equal(result.href, cert_url, 'should attempt to retrieve cert without proxy')
+    t.equal(result.agent, undefined, 'should not set proxy agent without proxy env variable')
+    t.end()
+  })
+  revertfetch()
+  revertValidate()
+})
+
+test('should build proxy agent if http_proxy env variable is set', function (t) {
+  process.env.http_proxy = 'https://someproxy.com';
+  var getCert = verifier.__get__('getCert');
+  var revertfetch = verifier.__set__('fetchCert', function (options, callback) {
+    callback(null, options.request);
+  })
+  var revertValidate = verifier.__set__('validateCert', function (cert) {
+    return false;
+  })
+  getCert(cert_url, function (er, result) {
+    t.equal(result.href, cert_url, 'should attempt to retrieve cert')
+    t.equal(result.agent.proxy.host, 'someproxy.com', 'should set proxy agent proxy env variable')
+    t.end()
+  })
+  revertfetch()
+  revertValidate()
 })

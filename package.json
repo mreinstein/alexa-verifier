@@ -20,11 +20,13 @@
   "author": "Mike Reinstein",
   "license": "MIT",
   "dependencies": {
+    "https-proxy-agent": "^2.1.1",
     "node-forge": "^0.7.0",
     "validator": "^9.0.0"
   },
   "devDependencies": {
     "nock": "^9.0.2",
+    "rewire": "^4.0.1",
     "sinon": "^4.1.5",
     "tap": "^11.0.0",
     "unroll": "1.4.0"

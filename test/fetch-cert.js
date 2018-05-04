@@ -9,7 +9,7 @@ var url       = require('url')
 var cert_url = url.parse('https://s3.amazonaws.com/echo.api/echo-api-cert.pem')
 
 test('fetchCert should ignore response for error HTTP status', function (t) {
-  var options = { url: cert_url }
+  var options = { request: cert_url }
 
   nock('https://s3.amazonaws.com').get(cert_url.path).reply(400, 'Bad Request')
 
@@ -22,7 +22,7 @@ test('fetchCert should ignore response for error HTTP status', function (t) {
 
 
 test('fetchCert should call back with response body for OK HTTP status', function (t) {
-  var options = { url: cert_url }
+  var options = { request: cert_url }
 
   nock('https://s3.amazonaws.com').get(cert_url.path).reply(200, 'mock pem data')
 
@@ -35,7 +35,7 @@ test('fetchCert should call back with response body for OK HTTP status', functio
 
 
 test('fetchCert should hit cache for subsequent certificate reqs', function (t) {
-  var options = { url: cert_url, cache: { } }
+  var options = {request: cert_url, cache: {}}
   var pem_data = 'mock pem data'
 
   nock('https://s3.amazonaws.com').get(cert_url.path).reply(200, 'mock pem data')
