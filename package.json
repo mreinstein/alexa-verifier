@@ -26,7 +26,7 @@
   "devDependencies": {
     "nock": "^9.0.2",
     "sinon": "^4.1.5",
-    "tap": "^11.0.0",
+    "tap": "^12.0.0",
     "unroll": "1.4.0"
   },
   "engine": {
