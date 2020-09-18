@@ -6,7 +6,7 @@ var verifier = require('../')
 var sinon    = require('sinon')
 
 
-var cert_url = 'https://s3.amazonaws.com/echo.api/echo-api-cert-5.pem' // latest valid cert
+var cert_url = 'https://s3.amazonaws.com/echo.api/echo-api-cert-8.pem' // latest valid cert
 
 test('handle missing cert_url parameter', function (t) {
   var body, now, signature

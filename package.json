@@ -20,7 +20,7 @@
   "author": "Mike Reinstein",
   "license": "MIT",
   "dependencies": {
-    "node-forge": "^0.7.0",
+    "node-forge": "^0.10.0",
     "validator": "^9.0.0"
   },
   "devDependencies": {
