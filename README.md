@@ -31,18 +31,16 @@ arguments
 You may include a callback function, in the standard node error argument-first format:
 
 ```javascript
-const verifier = require('alexa-verifier')
+import verifier from 'alexa-verifier'
 
 
-verifier(cert_url, signature, requestRawBody, function callbackFn(er) {
+verifier(cert_url, signature, requestRawBody, function callbackFn (er) {
   // if er, something went wrong
 })
 ```
 
 Ommiting a callback function returns a promise:
+
 ```javascript
-const verifier = require('alexa-verifier')
-
-
 const verifyPromise = verifier(cert_url, signature, requestRawBody)
 ```
