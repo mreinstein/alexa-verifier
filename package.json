@@ -1,6 +1,6 @@
 {
   "name": "alexa-verifier",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Verify HTTP requests sent to an Alexa skill are sent from Amazon",
   "main": "index.js",
   "type": "module",
@@ -30,7 +30,7 @@
     "tap": "^15.0.9",
     "unroll": "1.4.0"
   },
-  "engine": {
+  "engines": {
     "node": ">=12.17"
   }
 }
