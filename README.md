@@ -35,7 +35,7 @@ import verifier from 'alexa-verifier'
 
 
 verifier(cert_url, signature, requestRawBody, function callbackFn (er) {
-  // if er, something went wrong
+    // if er, something went wrong
 })
 ```
 
