@@ -3,6 +3,7 @@
   "version": "2.0.2",
   "description": "Verify HTTP requests sent to an Alexa skill are sent from Amazon",
   "main": "index.js",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/mreinstein/alexa-verifier.git"
@@ -26,10 +27,10 @@
   "devDependencies": {
     "nock": "^9.0.2",
     "sinon": "^4.1.5",
-    "tap": "^11.0.0",
+    "tap": "^15.0.9",
     "unroll": "1.4.0"
   },
   "engine": {
-    "node": ">=4"
+    "node": ">=12.17"
   }
 }

@@ -1,41 +1,39 @@
-'use strict'
-
-var crypto          = require('crypto')
-var fetchCert       = require('./fetch-cert')
-var url             = require('url')
-var validateCert    = require('./validate-cert')
-var validateCertUri = require('./validate-cert-uri')
-var validator       = require('validator')
+import crypto          from 'crypto'
+import fetchCert       from './fetch-cert.js'
+import url             from 'url'
+import validateCert    from './validate-cert.js'
+import validateCertUri from './validate-cert-uri.js'
+import validator       from 'validator'
 
 
-// constants
-var TIMESTAMP_TOLERANCE = 150
-var SIGNATURE_FORMAT = 'base64'
+const TIMESTAMP_TOLERANCE = 150
+const SIGNATURE_FORMAT = 'base64'
+
 
 function getCert (cert_url, callback) {
-  var options = { url: url.parse(cert_url) }
-  var result = validateCertUri(options.url)
-  if (result !== true)
-    return process.nextTick(callback, result)
+    const options = { url: url.parse(cert_url) }
+    const result = validateCertUri(options.url)
+    if (result !== true)
+        return process.nextTick(callback, result)
 
-  fetchCert(options, function (er, pem_cert) {
-    if (er)
-      return callback(er)
+    fetchCert(options, function (er, pem_cert) {
+        if (er)
+            return callback(er)
 
-    er = validateCert(pem_cert)
-    if (er)
-      return callback(er)
+        er = validateCert(pem_cert)
+        if (er)
+            return callback(er)
 
-    callback(er, pem_cert)
-  })
+        callback(er, pem_cert)
+    })
 }
 
 
 // returns true if the signature for the request body is valid, false otherwise
 function isValidSignature (pem_cert, signature, requestBody) {
-  var verifier = crypto.createVerify('RSA-SHA1')
-  verifier.update(requestBody, 'utf8')
-  return verifier.verify(pem_cert, signature, SIGNATURE_FORMAT)
+    const verifier = crypto.createVerify('RSA-SHA1')
+    verifier.update(requestBody, 'utf8')
+    return verifier.verify(pem_cert, signature, SIGNATURE_FORMAT)
 }
 
 
@@ -43,66 +41,67 @@ function isValidSignature (pem_cert, signature, requestBody) {
 // TIMESTAMP_TOLERANCE seconds
 // returns undefined if valid, or an error string otherwise
 function validateTimestamp (requestBody) {
-  var d, e, error, now, oldestTime, request_json
-  try {
-    request_json = JSON.parse(requestBody)
-  } catch (error) {
-    e = error
-    return 'request body invalid json'
-  }
-  if (!(request_json.request && request_json.request.timestamp))
-    return 'Timestamp field not present in request'
+    let e, error, request_json
 
-  d = new Date(request_json.request.timestamp)
-  now = new Date()
-  oldestTime = now.getTime() - (TIMESTAMP_TOLERANCE * 1000)
-  if (d.getTime() < oldestTime)
-    return 'Request is from more than ' + TIMESTAMP_TOLERANCE + ' seconds ago'
+    try {
+        request_json = JSON.parse(requestBody)
+    } catch (error) {
+        e = error
+        return 'request body invalid json'
+    }
+
+    if (!(request_json.request && request_json.request.timestamp))
+        return 'Timestamp field not present in request'
+
+    const d = new Date(request_json.request.timestamp)
+    const now = new Date()
+    const oldestTime = now.getTime() - (TIMESTAMP_TOLERANCE * 1000)
+
+    if (d.getTime() < oldestTime)
+        return 'Request is from more than ' + TIMESTAMP_TOLERANCE + ' seconds ago'
 }
 
 
 function verifier (cert_url, signature, requestBody, callback) {
-  var er
+    if (!cert_url)
+        return process.nextTick(callback, 'missing certificate url')
 
-  if(!cert_url)
-    return process.nextTick(callback, 'missing certificate url')
+    if (!signature)
+        return process.nextTick(callback, 'missing signature')
 
-  if (!signature)
-    return process.nextTick(callback, 'missing signature')
+    if (!requestBody)
+        return process.nextTick(callback, 'missing request (certificate) body')
 
-  if (!requestBody)
-    return process.nextTick(callback, 'missing request (certificate) body')
+    if (!validator.isBase64(signature))
+        return process.nextTick(callback, 'invalid signature (not base64 encoded)')
 
-  if (!validator.isBase64(signature))
-    return process.nextTick(callback, 'invalid signature (not base64 encoded)')
+    const er = validateTimestamp(requestBody)
 
-  er = validateTimestamp(requestBody)
-
-  if (er)
-    return process.nextTick(callback, er)
-
-  getCert(cert_url, function (er, pem_cert) {
     if (er)
-      return callback(er)
+        return process.nextTick(callback, er)
 
-    if (!isValidSignature(pem_cert, signature, requestBody))
-      return callback('invalid signature')
+    getCert(cert_url, function (er, pem_cert) {
+        if (er)
+            return callback(er)
 
-    callback()
-  })
+        if (!isValidSignature(pem_cert, signature, requestBody))
+            return callback('invalid signature')
+
+        callback()
+    })
 }
 
 
 // certificate validator for amazon echo
-module.exports = function (cert_url, signature, requestBody, cb) {
-  if(cb)
-    return verifier(cert_url, signature, requestBody, cb)
+export default function alexaVerifier (cert_url, signature, requestBody, cb) {
+    if (cb)
+        return verifier(cert_url, signature, requestBody, cb)
 
-  return new Promise(function( resolve, reject) {
-     verifier(cert_url, signature, requestBody, function(er) {
-        if(er)
-          return reject(er)
-        resolve()
-     })
+    return new Promise(function (resolve, reject) {
+        verifier(cert_url, signature, requestBody, function (er) {
+            if (er)
+                return reject(er)
+            resolve()
+        })
   })
 }

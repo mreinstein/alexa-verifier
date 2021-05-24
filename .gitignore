@@ -4,3 +4,5 @@ node_modules
 
 # Don't checkin package-lock.json for libraries
 package-lock.json
+
+.nyc_output
