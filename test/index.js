@@ -4,7 +4,7 @@ import verifier from '../index.js'
 import sinon    from 'sinon'
 
 
-const cert_url = 'https://s3.amazonaws.com/echo.api/echo-api-cert-9.pem' // latest valid cert
+const cert_url = 'https://s3.amazonaws.com/echo.api/echo-api-cert-10.pem' // latest valid cert
 
 test('handle missing cert_url parameter', function (t) {
     const signature = 'JbWZ4iO5ogpq1NhsOqyqq/QRrvc1/XyDwjcBO9wWSk//c11+gImmtWzMG9tDEW40t0Xwt1cnGU93DwUZQzMyzJ5CMi+09qVQUSIHiSmPekKaQRxS0Ibu7l7cXXuCcOBupbkheD/Dsd897Bm5SQwd1cFKRv+PJlpmGKimgh2QmbivogsEkFl8b9SW48kjKWazwj/XP2SrHY0bTvwMTVu7zvTcp0ZenEGlY2DNr5zSd1n6lmS6rgAt1IPwhBzqI0PVMngaM0DQhB0wUPj3QoIUh0IyMVAQzRFbQpS4UGrA4M9a5a+AGy0jCQKiRCI+Yi9iZYEVYvfafF/lyOUHHYcpOg=='

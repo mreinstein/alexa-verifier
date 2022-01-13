@@ -124,7 +124,7 @@ test('fails on expired certificate (Not After)', function (t) {
 })
 
 test('approves valid certifcate', function (t) {
-    const pem = fs.readFileSync(__dirname + '/echo-api-cert-9.pem')
+    const pem = fs.readFileSync(__dirname + '/echo-api-cert-10.cer')
     t.ok(validate(pem) === undefined, 'Certificate should be valid')
     t.end()
 })
