@@ -21,7 +21,7 @@
   "author": "Mike Reinstein",
   "license": "MIT",
   "dependencies": {
-    "node-forge": "^0.10.0",
+    "node-forge": "^1.2.1",
     "validator": "^9.0.0"
   },
   "devDependencies": {
