@@ -2,7 +2,6 @@
 
 ![example workflow](https://github.com/mreinstein/alexa-verifier/actions/workflows/main.yml/badge.svg)
 
-[![Build Status](https://travis-ci.org/mreinstein/alexa-verifier.svg?branch=master)](https://travis-ci.org/mreinstein/alexa-verifier)
 
 Verify HTTP requests sent to an Alexa skill are sent from Amazon.
 
