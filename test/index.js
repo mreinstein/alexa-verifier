@@ -15,7 +15,7 @@ test('handle missing cert_url parameter', function (t) {
         }
     }
     verifier(undefined, signature, JSON.stringify(body), function (er) {
-        t.equal(er, 'missing certificate url')
+        t.equal(er, 'Mmissing certificate url')
         t.end()
     })
 })
