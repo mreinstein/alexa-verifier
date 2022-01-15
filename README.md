@@ -1,6 +1,6 @@
 # alexa-verifier
 
-![example workflow](https://github.com/mreinstein/alexa-verifier/actions/workflows/main/badge.svg)
+![example workflow](https://github.com/mreinstein/alexa-verifier/actions/workflows/main.yml/badge.svg)
 
 [![Build Status](https://travis-ci.org/mreinstein/alexa-verifier.svg?branch=master)](https://travis-ci.org/mreinstein/alexa-verifier)
 
