@@ -22,7 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "node-forge": "^1.2.1",
-    "validator": "^9.0.0"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "nock": "^9.0.2",

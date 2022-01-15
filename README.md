@@ -1,6 +1,6 @@
 # alexa-verifier
 
-![example workflow](https://github.com/mreinstein/alexa-verifier/actions/workflows/main.yml/badge.svg)
+![tests](https://github.com/mreinstein/alexa-verifier/actions/workflows/main.yml/badge.svg)
 
 
 Verify HTTP requests sent to an Alexa skill are sent from Amazon.
