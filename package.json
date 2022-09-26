@@ -25,9 +25,9 @@
     "validator": "^13.7.0"
   },
   "devDependencies": {
-    "nock": "^9.0.2",
-    "sinon": "^4.1.5",
-    "tap": "^15.0.9",
+    "nock": "^13.0.0",
+    "sinon": "^14.0.0",
+    "tap": "^16.0.0",
     "unroll": "1.4.0"
   },
   "engines": {
