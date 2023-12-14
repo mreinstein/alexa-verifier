@@ -8,6 +8,7 @@ import validator       from 'validator'
 
 const TIMESTAMP_TOLERANCE = 150
 const SIGNATURE_FORMAT = 'base64'
+const CHARACTER_ENCODING = 'utf8'
 
 
 function getCert (cert_url, callback) {
@@ -17,6 +18,7 @@ function getCert (cert_url, callback) {
         return process.nextTick(callback, result)
 
     fetchCert(options, function (er, pem_cert) {
+        
         if (er)
             return callback(er)
 
@@ -31,8 +33,8 @@ function getCert (cert_url, callback) {
 
 // returns true if the signature for the request body is valid, false otherwise
 function isValidSignature (pem_cert, signature, requestBody) {
-    const verifier = crypto.createVerify('RSA-SHA1')
-    verifier.update(requestBody, 'utf8')
+    const verifier = crypto.createVerify('RSA-SHA256')
+    verifier.update(requestBody, CHARACTER_ENCODING)
     return verifier.verify(pem_cert, signature, SIGNATURE_FORMAT)
 }
 
