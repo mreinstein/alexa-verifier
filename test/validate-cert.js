@@ -118,13 +118,13 @@ test('fails on non amazon subject alt name', function (t) {
 })
 
 test('fails on expired certificate (Not After)', function (t) {
-    const pem = fs.readFileSync(__dirname + '/cert-expired.pem')
+    const pem = fs.readFileSync(__dirname + '/mocks/cert-expired.pem')
     t.ok(validate(pem) === 'invalid certificate validity (past expired date)')
     t.end()
 })
 
 test('approves valid certifcate', function (t) {
-    const pem = fs.readFileSync(__dirname + '/echo-api-cert-12.cer')
+    const pem = fs.readFileSync(__dirname + '/mocks/echo-api-cert-12.cer')
     t.ok(validate(pem) === undefined, 'Certificate should be valid')
     t.end()
 })

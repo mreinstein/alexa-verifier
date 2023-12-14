@@ -1,10 +1,21 @@
 import { test } from 'tap'
+import crypto   from 'crypto'
+import esmock   from 'esmock'
+import fs       from 'fs'
 import url      from 'url'
 import verifier from '../index.js'
 import sinon    from 'sinon'
+import { dirname }       from 'path'
+import { fileURLToPath } from 'url'
 
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const cert_url = 'https://s3.amazonaws.com/echo.api/echo-api-cert-12.pem' // latest valid cert
+
+const rsaSha256Key = fs.readFileSync(`${__dirname}/mocks/rsa_sha256`).toString()
+const validPem = fs.readFileSync(`${__dirname}/mocks/rsa_sha256_pub`).toString()
+
 
 test('handle missing cert_url parameter', function (t) {
     const signature = 'JbWZ4iO5ogpq1NhsOqyqq/QRrvc1/XyDwjcBO9wWSk//c11+gImmtWzMG9tDEW40t0Xwt1cnGU93DwUZQzMyzJ5CMi+09qVQUSIHiSmPekKaQRxS0Ibu7l7cXXuCcOBupbkheD/Dsd897Bm5SQwd1cFKRv+PJlpmGKimgh2QmbivogsEkFl8b9SW48kjKWazwj/XP2SrHY0bTvwMTVu7zvTcp0ZenEGlY2DNr5zSd1n6lmS6rgAt1IPwhBzqI0PVMngaM0DQhB0wUPj3QoIUh0IyMVAQzRFbQpS4UGrA4M9a5a+AGy0jCQKiRCI+Yi9iZYEVYvfafF/lyOUHHYcpOg=='
@@ -112,12 +123,27 @@ test('handle invalid base64-encoded signature parameter', function (t) {
 })
 
 
-test('handle valid signature', function (t) {
-    const ts = '2017-02-10T07:27:59Z'
+test('handle valid signature', async function (t) {
+
+    const verifier = await esmock('../index.js', {
+        '../fetch-cert.js': {
+            default: function fetchCert (options, callback) {
+                callback(undefined, validPem)
+            }
+        },
+        '../validate-cert.js': {
+            default: function validateCert (pem_cert) {
+                // we're using our mocked sha256 pub/private keypair, so skip all the validation unrelated to
+                // signature checking.
+            }
+        },
+    })
+
+
+    const ts = '2019-09-01T07:27:59Z'
     const now = new Date(ts)
     const clock = sinon.useFakeTimers(now.getTime())
-    const cert_url = 'https://s3.amazonaws.com/echo.api/echo-api-cert-4.pem'
-    const signature = 'Qc8OuaGEHWeL/39XTEDYFbOCufYWpwi45rqmM2R4WaSEYcSXq+hUko/88wv48+6SPUiEddWSEEINJFAFV5auYZsnBzqCK+SO8mGNOGHmLYpcFuSEHI3eA3nDIEARrXTivqqbH/LCPJHc0tqNYr3yPZRIR2mYFndJOxgDNSOooZX+tp2GafHHsjjShCjmePaLxJiGG1DmrL6fyOJoLrzc0olUxLmnJviS6Q5wBir899TMEZ/zX+aiBTt/khVvwIh+hI/PZsRq/pQw4WAvQz1bcnGNamvMA/TKSJtR0elJP+TgCqbVoYisDgQXkhi8/wonkLhs68pN+TurbR7GyC1vxw=='
+    
     const body = {
         "version": "1.0",
         "session": {
@@ -143,20 +169,37 @@ test('handle valid signature', function (t) {
         }
     }
 
-    verifier(cert_url, signature, JSON.stringify(body), function (er) {
+    const requestEnvelope = JSON.stringify(body)
+    const signer = crypto.createSign('RSA-SHA256')
+    signer.update(requestEnvelope)
+    const signature = signer.sign(rsaSha256Key, 'base64');
+
+    verifier(cert_url, signature, requestEnvelope, function (er) {
         t.equal(er, undefined)
         clock.restore()
-        t.end()
     })
 })
 
 
-test('handle valid signature with double byte utf8 encodings', function (t) {
+test('handle valid signature with double byte utf8 encodings', async function (t) {
+    const verifier = await esmock('../index.js', {
+        '../fetch-cert.js': {
+            default: function fetchCert (options, callback) {
+                callback(undefined, validPem)
+            }
+        },
+        '../validate-cert.js': {
+            default: function validateCert (pem_cert) {
+                // we're using our mocked sha256 pub/private keypair, so skip all the validation unrelated to
+                // signature checking.
+            }
+        },
+    })
+
     const ts = '2017-04-05T12:02:36Z'
     const now = new Date(ts)
     const clock = sinon.useFakeTimers(now.getTime())
-    const cert_url = 'https://s3.amazonaws.com/echo.api/echo-api-cert-4.pem'
-    const signature = 'WLShxe8KMwHUt8hVD5+iE4tDO+J8Li21yocDWnq8LVRpE2PMMWCxjQzOCzyoFm4i/yW07UKtKQxcnzB44ZEdP6e6HelwBwEdP4lb8jQcc5knk8SuUth4N7cu6Em8FPOdOJdd9idHbO/p8BTb14wgua5n+1SDKHm+wPikOVsfCMYsXcwRWx5FsgP1wVPrDsCHN/ISiCXz+UuMnd6H0uRNdLZ/x/ikPkknh+P1kuFa2a2LN4r57IwBDAxkdf9MzXEexSOO0nWLnyJY2VAFB+O7JKE39CwMJ1+YDOwTTTLjilkCnSlfnr6DP4HPGHnYhh2HQZle8UBrSDm4ntflErpISQ=='
+    
     const body = {
         "version":"1.0",
         "session": {
@@ -189,6 +232,11 @@ test('handle valid signature with double byte utf8 encodings', function (t) {
         }
     }
 
+    const requestEnvelope = JSON.stringify(body)
+    const signer = crypto.createSign('RSA-SHA256')
+    signer.update(requestEnvelope)
+    const signature = signer.sign(rsaSha256Key, 'base64');
+
     verifier(cert_url, signature, JSON.stringify(body), function (er) {
         t.equal(er, undefined)
         clock.restore()
@@ -199,10 +247,7 @@ test('handle valid signature with double byte utf8 encodings', function (t) {
 
 test('invocation', function (t) {
     const ts = '2017-04-05T12:02:36Z'
-    const now = new Date(ts)
-    const clock = sinon.useFakeTimers(now.getTime())
-    const cert_url = 'https://s3.amazonaws.com/echo.api/echo-api-cert-4.pem'
-    const signature = 'Qc8OuaGEHWeL/39XTEDYFbOCufYWpwi45rqmM2R4WaSEYcSXq+hUko/88wv48+6SPUiEddWSEEINJFAFV5auYZsnBzqCK+SO8mGNOGHmLYpcFuSEHI3eA3nDIEARrXTivqqbH/LCPJHc0tqNYr3yPZRIR2mYFndJOxgDNSOooZX+tp2GafHHsjjShCjmePaLxJiGG1DmrL6fyOJoLrzc0olUxLmnJviS6Q5wBir899TMEZ/zX+aiBTt/khVvwIh+hI/PZsRq/pQw4WAvQz1bcnGNamvMA/TKSJtR0elJP+TgCqbVoYisDgQXkhi8/wonkLhs68pN+TurbR7GyC1vxw=='
+    const signature = ''
     const body = {
         "version": "1.0",
         "session": {
