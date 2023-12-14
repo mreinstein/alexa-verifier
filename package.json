@@ -1,6 +1,6 @@
 {
   "name": "alexa-verifier",
-  "version": "3.0.2",
+  "version": "4.0.0",
   "description": "Verify HTTP requests sent to an Alexa skill are sent from Amazon",
   "main": "index.js",
   "type": "module",
@@ -27,9 +27,9 @@
   "devDependencies": {
     "esmock": "^2.6.0",
     "nock": "^13.0.0",
-    "sinon": "^14.0.0",
+    "sinon": "^17.0.1",
     "tap": "^16.0.0",
-    "unroll": "1.4.0"
+    "unroll": "1.6.0"
   },
   "engines": {
     "node": ">=12.17"
